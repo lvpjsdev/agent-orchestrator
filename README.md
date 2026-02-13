@@ -2,6 +2,14 @@
 
 Operational orchestration utilities for agent workflow governance.
 
+## Inspiration & References
+
+This project's compound engineering workflow was significantly influenced by:
+
+- **[Antfarm Patterns: Orchestrating Specialized Agent Teams](https://www.vincirufus.com/posts/antfarm-patterns-orchestrating-specialized-agent-teams/)** by Vinci Rufus — Key insights on fresh contexts per step, verifier agents, status protocols, and checkpoint systems.
+- **[The Ralph Loop: Autonomous AI Agent Pattern](https://www.vincirufus.com/posts/ralph-loop-compound-engineering-future-software-development/)** by Vinci Rufus — Iterative development loop with fresh context per iteration.
+- **[compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin)** by Every — Research agents, review swarms, and orchestration patterns.
+
 ## Source of truth
 
 - `agent-skills-matrix.json` - required/optional/forbidden skills per stage.
@@ -46,10 +54,60 @@ pnpm -C packages/agent-orchestrator prompts:install -- --force
 
 Main workflow prompts:
 
-- `/ao-start` - manager stage: run brainstorming first, then create/clarify PRD and task plan.
-- `/ao-run` - start coder loop after PRD approval (default 5 iterations).
-- `/ao-continue` - resume an interrupted loop (default 1 iteration).
+- `/ao-start` - manager stage: brainstorm → plan → PRD decomposition.
+- `/ao-run` - execution loop: implement → verify → test → review → commit → compound.
+- `/ao-continue` - resume interrupted workflow with validation and checkpoints.
 - `/ao-human` - list tasks tagged for human escalation (default tag `@human`).
+
+## Compound Engineering Workflow
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                        COMPOUND ENGINEERING CYCLE                                │
+│                                                                                  │
+│        "Each unit of work should make subsequent units easier"                  │
+│                                                                                  │
+│   ┌─────────────────────────────────────────────────────────────────────────┐   │
+│   │                                                                          │   │
+│   │     /ao-start          /ao-run              COMPOUND                     │   │
+│   │         │                  │                    │                        │   │
+│   │         ▼                  ▼                    ▼                        │   │
+│   │     ┌──────┐          ┌──────┐            ┌──────┐                       │   │
+│   │     │ PLAN │ ───────► │ WORK │ ────────► │LEARN │                       │   │
+│   │     └──────┘          └──────┘            └──────┘                       │   │
+│   │                                              │                           │   │
+│   │                                              │                           │   │
+│   │                                              ▼                           │   │
+│   │                                       docs/solutions/                    │   │
+│   │                                              │                           │   │
+│   │                                              │                           │   │
+│   │               ┌──────────────────────────────┘                           │   │
+│   │               │                                                           │   │
+│   │               ▼                                                           │   │
+│   │        NEXT ITERATION IS EASIER                                           │   │
+│   │        (learnings-researcher finds past solutions)                        │   │
+│   │                                                                           │   │
+│   └─────────────────────────────────────────────────────────────────────────┘   │
+│                                                                                  │
+└─────────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Workflow Phases
+
+| Command | Phase | Purpose | Output |
+|---------|-------|---------|--------|
+| `/ao-start` | PLAN | WHAT to build, HOW to build it | `docs/brainstorms/`, `docs/plans/`, `.agents/tasks/prd.json` |
+| `/ao-run` | WORK | Execute atomic stories with verify step | Code, tests, commits |
+| `/ao-run` (end) | LEARN | Extract patterns, document gotchas | `docs/solutions/<category>/` |
+| `/ao-continue` | RECOVER | Resume with validation | Checkpoints, state fixes |
+
+### Compound Feedback Loop
+
+```
+docs/solutions/ ──► learnings-researcher (in /ao-start) ──► better plans
+      │
+      └──► pattern-recognition-specialist (in /ao-continue) ──► faster recovery
+```
 
 Workflow source-of-truth policy:
 
