@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "stages": {
+    "manager": {
+      "label": "Manager/Architect",
+      "requiredSkills": ["brainstorming", "prd"],
+      "optionalSkills": ["find-skills", "web-search", "ui-design-system"],
+      "forbiddenSkills": ["coding-agent", "yeet"]
+    },
+    "coder": {
+      "label": "Coder (Claude Code only)",
+      "requiredSkills": [
+        "coding-agent",
+        "react-best-practices",
+        "typescript-advanced-types"
+      ],
+      "optionalSkills": ["ui-skills", "design-system-patterns", "openai-docs"],
+      "forbiddenSkills": ["yeet", "security-best-practices"],
+      "agentConstraints": {
+        "allowedAgents": ["claude"]
+      }
+    },
+    "tester": {
+      "label": "Tester",
+      "requiredSkills": ["e2e-testing-patterns", "playwright"],
+      "optionalSkills": ["chrome-devtools", "screenshot"],
+      "forbiddenSkills": ["coding-agent"]
+    },
+    "reviewer": {
+      "label": "Reviewer",
+      "requiredSkills": [],
+      "optionalSkills": ["security-best-practices"],
+      "forbiddenSkills": ["coding-agent"],
+      "requiredPolicies": ["review-mode-only", "ignore-generated-paths"]
+    },
+    "devops": {
+      "label": "DevOps",
+      "requiredSkills": [],
+      "optionalSkills": ["coding-agent"],
+      "forbiddenSkills": ["product-scope-change"],
+      "requiredPolicies": ["ci-deploy-command-runbooks"]
+    }
+  }
+}

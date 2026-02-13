@@ -1,0 +1,14 @@
+{
+  "name": "@dummy-products/agent-orchestrator",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./matrix": "./agent-skills-matrix.json",
+    "./cli": "./scripts/skills-gate.mjs"
+  },
+  "scripts": {
+    "skills:gate": "node scripts/skills-gate.mjs",
+    "prompts:install": "node scripts/install-codex-prompts.mjs"
+  }
+}

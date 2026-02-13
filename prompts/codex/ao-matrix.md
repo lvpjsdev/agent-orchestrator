@@ -1,0 +1,19 @@
+---
+description: Inspect the agent-orchestrator skill matrix for a stage
+argument-hint: "<stage>"
+---
+
+# AO Matrix
+
+Inspect `packages/agent-orchestrator/agent-skills-matrix.json` and summarize the constraints for the requested stage.
+
+1) Parse command arguments (`$ARGUMENTS`) as `stage`.
+   - If missing/ambiguous, ask the user which stage they mean and show available stage keys from the matrix.
+
+2) Read the matrix and output:
+   - stage label (if present)
+   - `requiredSkills`, `optionalSkills`, `forbiddenSkills`
+   - `requiredPolicies`
+   - `agentConstraints.allowedAgents` (if present)
+
+3) If the stage is missing, explain that and list available stage keys.
