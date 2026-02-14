@@ -3,7 +3,7 @@ description: Inspect the burlaki skill matrix for a stage
 argument-hint: "<stage>"
 ---
 
-# AO Matrix
+# Burlaki Matrix
 
 Inspect `packages/burlaki/agent-skills-matrix.json` and summarize the constraints for the requested stage.
 

@@ -82,7 +82,7 @@
     "references": [
       "package.json - текущая структура",
       "scripts/skills-gate.mjs - CLI скрипт для упаковки",
-      "scripts/install-codex-prompts.mjs - второй скрипт"
+      "scripts/install-prompts.mjs - второй скрипт"
     ]
   }
 }

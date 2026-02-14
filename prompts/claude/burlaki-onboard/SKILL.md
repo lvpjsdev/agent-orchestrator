@@ -3,7 +3,7 @@ name: burlaki-onboard
 description: Quick onboarding for the contract-first monorepo workflow
 ---
 
-# AO Onboard
+# Burlaki Onboard
 
 Onboard me to this repo's operational workflow before I start coding.
 

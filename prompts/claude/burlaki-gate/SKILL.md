@@ -3,7 +3,7 @@ name: burlaki-gate
 description: Run burlaki skills gate (matrix + optional log scan)
 ---
 
-# AO Gate
+# Burlaki Gate
 
 Run the skill gate for this repo and summarize the result.
 

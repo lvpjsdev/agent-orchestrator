@@ -3,7 +3,7 @@ name: burlaki-human
 description: Show tasks escalated to a human (tag-based)
 ---
 
-# AO Human
+# Burlaki Human
 
 Find escalated stories/tasks by tag in Ralph PRD files.
 

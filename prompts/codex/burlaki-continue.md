@@ -3,7 +3,7 @@ description: Resume interrupted workflow with state validation and checkpoints
 argument-hint: "[--validate-only] [--from <phase>] [--no-checkpoint]"
 ---
 
-# AO Continue — Resume with Validation and Checkpoints
+# Burlaki Continue — Resume with Validation and Checkpoints
 
 Resume an interrupted compound engineering workflow. Creates restore point before any state modifications.
 

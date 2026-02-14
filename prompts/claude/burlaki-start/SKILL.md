@@ -3,7 +3,7 @@ name: burlaki-start
 description: Start workflow from PRD and task planning (manager stage)
 ---
 
-# AO Start
+# Burlaki Start
 
 Start workflow via Ralph manager stage: collect requirements, create PRD, and prepare a compact task list for coder loop.
 

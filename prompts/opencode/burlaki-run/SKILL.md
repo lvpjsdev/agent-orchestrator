@@ -3,7 +3,7 @@ name: burlaki-run
 description: Run coder cycle after PRD approval (Ralph loop)
 ---
 
-# AO Run
+# Burlaki Run
 
 Run the development cycle after PRD/tasks are approved by a human.
 

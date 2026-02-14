@@ -3,7 +3,7 @@ description: Run burlaki skills gate (matrix + optional log scan)
 argument-hint: "<stage> <agent> [--log <path>] [--policies <csv>]"
 ---
 
-# AO Gate
+# Burlaki Gate
 
 Run the skill gate for this repo and summarize the result.
 

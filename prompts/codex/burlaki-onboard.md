@@ -3,7 +3,7 @@ description: Quick onboarding for the contract-first monorepo workflow (what to 
 argument-hint: ""
 ---
 
-# AO Onboard
+# Burlaki Onboard
 
 Onboard me to this repo’s operational workflow before I start coding.
 

@@ -3,7 +3,7 @@ description: Start compound engineering workflow (brainstorm → plan → PRD)
 argument-hint: "<product request>"
 ---
 
-# AO Start — Compound Engineering Workflow
+# Burlaki Start — Compound Engineering Workflow
 
 Multi-agent orchestrated workflow with fresh contexts and explicit handoffs.
 

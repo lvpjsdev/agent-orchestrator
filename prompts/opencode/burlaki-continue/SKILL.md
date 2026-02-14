@@ -3,7 +3,7 @@ name: burlaki-continue
 description: Continue interrupted Ralph development cycle
 ---
 
-# AO Continue
+# Burlaki Continue
 
 Continue interrupted cycle using existing PRD/task state and Ralph loop.
 

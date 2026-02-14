@@ -3,7 +3,7 @@ description: Run execution cycle with verify step (per-story loop)
 argument-hint: "[iterations] [--no-commit] [--parallel]"
 ---
 
-# AO Run — Execution with Verification
+# Burlaki Run — Execution with Verification
 
 Execute PRD stories through orchestrated agent pipeline with fresh contexts.
 
@@ -489,7 +489,7 @@ After all iterations:
 
 ```
 ═══════════════════════════════════════════════════════════════
-AO Run Complete
+Burlaki Run Complete
 
 Stories: 7/7
 ├── Completed: 6
