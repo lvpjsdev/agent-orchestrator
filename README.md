@@ -53,7 +53,7 @@ See [WORKFLOW_DIAGRAMS.md](docs/WORKFLOW_DIAGRAMS.md) for visual reference.
 ## CLI
 
 ```bash
-npx @lvpjsdev/agent-orchestrator/cli --matrix ./agent-skills-matrix.json --stage coder --agent claude
+npx ao-skills-gate --matrix ./agent-skills-matrix.json --stage coder --agent claude
 ```
 
 Optional flags:
@@ -79,13 +79,13 @@ This repo ships shared Codex prompt files under:
 Install them into your local Codex prompt directory (usually `~/.codex/prompts`):
 
 ```bash
-npx @lvpjsdev/agent-orchestrator/cli --install-prompts
+npx ao-skills-gate --install-prompts
 ```
 
 Overwrite existing files:
 
 ```bash
-npx @lvpjsdev/agent-orchestrator/cli --install-prompts --force
+npx ao-skills-gate --install-prompts --force
 ```
 
 ## Workflow Policies
