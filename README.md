@@ -1,6 +1,26 @@
-# agent-orchestrator
+# @lvpjsdev/agent-orchestrator
 
 Operational orchestration utilities for agent workflow governance.
+
+## Installation
+
+```bash
+npm install @lvpjsdev/agent-orchestrator
+```
+
+## Usage
+
+```js
+import matrix from '@lvpjsdev/agent-orchestrator';
+
+console.log(matrix.stages.coder.requiredSkills);
+```
+
+Or import the matrix directly:
+
+```js
+import matrix from '@lvpjsdev/agent-orchestrator/matrix';
+```
 
 ## Compound Engineering Workflow
 
@@ -33,7 +53,7 @@ See [WORKFLOW_DIAGRAMS.md](docs/WORKFLOW_DIAGRAMS.md) for visual reference.
 ## CLI
 
 ```bash
-pnpm -C packages/agent-orchestrator skills:gate -- --matrix ./agent-skills-matrix.json --stage coder --agent claude
+npx ao-skills-gate --matrix ./agent-skills-matrix.json --stage coder --agent claude
 ```
 
 Optional flags:
@@ -50,64 +70,22 @@ Optional flags:
 npx skills add obra/superpowers@brainstorming -g -y
 ```
 
-## Agent prompts/skills
+## Codex Prompts (Slash Commands)
 
-This repo ships shared prompts and skills for multiple AI coding tools:
+This repo ships shared Codex prompt files under:
 
-- `prompts/codex/*.md` - Codex slash commands
-- `prompts/opencode/*/SKILL.md` - OpenCode skills
-- `prompts/claude/*/SKILL.md` - Claude Code skills
+- `packages/agent-orchestrator/prompts/codex/*.md`
 
-### Local install (default)
-
-Installs into project directory:
+Install them into your local Codex prompt directory (usually `~/.codex/prompts`):
 
 ```bash
-# Codex → .codex/prompts/
-pnpm prompts:install:codex
-
-# OpenCode → .opencode/skills/
-pnpm prompts:install:opencode
-
-# Claude Code → .claude/skills/
-pnpm prompts:install:claude
-
-# All at once
-pnpm prompts:install
+npx ao-skills-gate --install-prompts
 ```
 
-### Global install
-
-Installs into home directory:
+Overwrite existing files:
 
 ```bash
-# Codex → ~/.codex/prompts/
-pnpm prompts:install:codex:global
-
-# OpenCode → ~/.config/opencode/skills/
-pnpm prompts:install:opencode:global
-
-# Claude Code → ~/.claude/skills/
-pnpm prompts:install:claude:global
-
-# All at once
-pnpm prompts:install:global
-```
-
-### Overwrite existing
-
-Add `--force` flag:
-
-```bash
-# Local
-pnpm prompts:install:codex -- --force
-pnpm prompts:install:opencode -- --force
-pnpm prompts:install:claude -- --force
-
-# Global
-pnpm prompts:install:codex:global -- --force
-pnpm prompts:install:opencode:global -- --force
-pnpm prompts:install:claude:global -- --force
+npx ao-skills-gate --install-prompts --force
 ```
 
 ## Workflow Policies
@@ -139,6 +117,10 @@ git log --grep='[ao-checkpoint]'
 # Restore
 git reset --hard <checkpoint-sha>
 ```
+
+## License
+
+MIT
 
 ## Roadmap
 
