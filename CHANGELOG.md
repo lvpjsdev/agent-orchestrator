@@ -15,12 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Migration Guide
 
 1. Uninstall old package and install new:
+
    ```bash
    npm uninstall @lvpjsdev/agent-orchestrator
    npm install @lvpjsdev/burlaki
    ```
 
 2. Update import statements:
+
    ```js
    // Old
    import matrix from '@lvpjsdev/agent-orchestrator';
@@ -30,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    ```
 
 3. Update CLI calls in scripts/CI:
+
    ```bash
    # Old
    npx ao-skills-gate --matrix ./agent-skills-matrix.json --stage coder
