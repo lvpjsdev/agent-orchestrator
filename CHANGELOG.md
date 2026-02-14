@@ -41,6 +41,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    pnpm dlx burlaki-gate --matrix ./agent-skills-matrix.json --stage coder
    ```
 
+4. Check and update other files:
+
+   - `package.json` scripts: replace `ao-skills-gate` with `burlaki-gate`
+   - CI/CD configurations (GitHub Actions, GitLab CI, etc.)
+   - Configuration files referencing the package
+   - Comments and documentation in your project
+
 ### Added
 
 - Initial public release
