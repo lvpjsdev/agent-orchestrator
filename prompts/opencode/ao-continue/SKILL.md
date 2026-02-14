@@ -19,7 +19,7 @@ test -f .agents/tasks/prd.json
 
 If missing, stop and ask to run `/ao-start` first.
 
-2) Run one or more iterations to resume:
+1) Run one or more iterations to resume:
 
 ```bash
 ralph build <iterations>
@@ -27,14 +27,14 @@ ralph build <iterations>
 
 Use default `1` when not provided.
 
-3) Summarize result from latest run metadata/log:
-- story handled this iteration
-- status (`done`, reset to `open`, or blocked)
-- key fail reasons if blocked (tests/review/skill gate)
-- whether escalation tag is present
-- whether PRD/specs drift was detected (`@spec-drift`)
+1) Summarize result from latest run metadata/log:
+   - story handled this iteration
+   - status (`done`, reset to `open`, or blocked)
+   - key fail reasons if blocked (tests/review/skill gate)
+   - whether escalation tag is present
+   - whether PRD/specs drift was detected (`@spec-drift`)
 
-4) If a story is stuck across attempts, propose escalation with `@human` tag and show it via `/ao-human`.
+1) If a story is stuck across attempts, propose escalation with `@human` tag and show it via `/ao-human`.
 
 **Guardrails**
 - Continue from existing state; do not rewrite PRD unless user asks

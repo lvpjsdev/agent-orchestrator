@@ -14,13 +14,15 @@ Default tag: `@human`
 1) Parse args from user input:
    - Optional `--tag <tag>` (default `@human`)
 
-2) Search in PRD/task artifacts (only include paths that exist):
+1) Search in PRD/task artifacts (only include paths that exist):
+
 ```bash
 rg -nF -- "<tag>" .agents/tasks/*.json .ralph/progress*.md .ralph/errors.log
 ```
+
 If `.agents/tasks` or `.ralph` is missing, report what is unavailable and omit those paths from the search.
 
-3) Summarize grouped by task/story when possible:
+1) Summarize grouped by task/story when possible:
    - PRD file
    - story/task id/title (if present)
    - lines that include the tag

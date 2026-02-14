@@ -21,14 +21,14 @@ test -f .agents/tasks/prd.json
 
 If missing, stop and suggest `/ao-start`.
 
-2) Ensure execution happens in a dedicated worktree for the current feature branch.
-Recommended pattern:
+1) Ensure execution happens in a dedicated worktree for the current feature branch.
+   Recommended pattern:
 
 ```bash
 git worktree add .codex/worktrees/<story-id> -b feature/<story-id>-<slug> develop
 ```
 
-3) Start coder loop:
+1) Start coder loop:
 
 ```bash
 ralph build <iterations>
@@ -41,14 +41,14 @@ When `--no-commit` is requested, run:
 ralph build <iterations> --no-commit
 ```
 
-4) After run, report:
-- processed stories/tasks
-- completed vs reopened tasks
-- test/review blockers
-- stories tagged for escalation (`@human`)
-- potential PRD vs specs drift findings (tag as `@spec-drift`)
+1) After run, report:
+   - processed stories/tasks
+   - completed vs reopened tasks
+   - test/review blockers
+   - stories tagged for escalation (`@human`)
+   - potential PRD vs specs drift findings (tag as `@spec-drift`)
 
-5) If iteration cap is reached and tasks still fail, ensure they are tagged `@human` and direct user to `/ao-human`.
+1) If iteration cap is reached and tasks still fail, ensure they are tagged `@human` and direct user to `/ao-human`.
 
 **Guardrails**
 - Do not start run before human approval of PRD/tasks

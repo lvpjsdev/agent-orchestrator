@@ -7,6 +7,8 @@ description: Run agent-orchestrator skills gate (matrix + optional log scan)
 
 Run the skill gate for this repo and summarize the result.
 
+**Steps**
+
 1) Parse command arguments from user input:
    - `stage`: required (e.g. `coder`, `reviewer`, `release`)
    - `agent`: optional unless required by the stage (e.g. `codex`, `claude`, `opencode`)
@@ -15,7 +17,7 @@ Run the skill gate for this repo and summarize the result.
 
 If `stage` is missing/ambiguous, ask the user for it.
 
-2) Run:
+1) Run:
 
 ```bash
 pnpm agents:skills-gate -- \
@@ -26,7 +28,7 @@ pnpm agents:skills-gate -- \
   --policies "<csv-if-provided>"
 ```
 
-3) Output a short summary:
+1) Output a short summary:
    - `status` + `reasons`
    - `skillsMissing`, `policiesMissing`
    - if `--log` was provided: `forbiddenSkillsUsed` (if any)

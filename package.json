@@ -13,10 +13,9 @@
     "prompts:install:codex": "node scripts/install-prompts.mjs --tool codex",
     "prompts:install:opencode": "node scripts/install-prompts.mjs --tool opencode",
     "prompts:install:claude": "node scripts/install-prompts.mjs --tool claude",
-    "prompts:install:all": "node scripts/install-prompts.mjs --tool codex && node scripts/install-prompts.mjs --tool opencode && node scripts/install-prompts.mjs --tool claude",
     "prompts:install:codex:global": "node scripts/install-prompts.mjs --tool codex --global",
     "prompts:install:opencode:global": "node scripts/install-prompts.mjs --tool opencode --global",
     "prompts:install:claude:global": "node scripts/install-prompts.mjs --tool claude --global",
-    "prompts:install:all:global": "node scripts/install-prompts.mjs --tool codex --global && node scripts/install-prompts.mjs --tool opencode --global && node scripts/install-prompts.mjs --tool claude --global"
+    "prompts:install:global": "node scripts/install-prompts.mjs --tool codex --global && node scripts/install-prompts.mjs --tool opencode --global && node scripts/install-prompts.mjs --tool claude --global"
   }
 }

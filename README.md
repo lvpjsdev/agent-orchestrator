@@ -49,7 +49,7 @@ pnpm prompts:install:opencode
 pnpm prompts:install:claude
 
 # All at once
-pnpm prompts:install:all
+pnpm prompts:install
 ```
 
 ### Global install
@@ -67,7 +67,7 @@ pnpm prompts:install:opencode:global
 pnpm prompts:install:claude:global
 
 # All at once
-pnpm prompts:install:all:global
+pnpm prompts:install:global
 ```
 
 ### Overwrite existing
@@ -75,8 +75,15 @@ pnpm prompts:install:all:global
 Add `--force` flag:
 
 ```bash
+# Local
 pnpm prompts:install:codex -- --force
+pnpm prompts:install:opencode -- --force
+pnpm prompts:install:claude -- --force
+
+# Global
 pnpm prompts:install:codex:global -- --force
+pnpm prompts:install:opencode:global -- --force
+pnpm prompts:install:claude:global -- --force
 ```
 
 Main workflow prompts:
