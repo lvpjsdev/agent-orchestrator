@@ -31,19 +31,19 @@ Roadmap for compound engineering workflow automation.
 
 ### v0.2 — Enhanced Recovery
 
-- [ ] **Rollback System**
-  - [ ] `/burlaki-rollback --to <checkpoint>` command
-  - [ ] Rollback to specific story state
-  - [ ] Rollback to last checkpoint
-  - [ ] Rollback with artifact preservation
-  - [ ] Dry-run mode: `--dry-run`
+- [x] **Rollback System (MVP)**
+  - [x] `/burlaki-rollback --to <checkpoint>` command
+  - [x] Rollback to specific story state
+  - [x] Rollback to last checkpoint
+  - [x] Dry-run mode: `--dry-run`
+  - [ ] Rollback with artifact preservation (`--keep-artifacts`)
   
   ```bash
   # Examples:
   /burlaki-rollback --to last-checkpoint
   /burlaki-rollback --to auth-003
   /burlaki-rollback --to abc1234
-  /burlaki-rollback --keep-artifacts  # Keep brainstorm/plan, reset PRD
+  /burlaki-rollback --to last-checkpoint --dry-run
   ```
 
 - [ ] **State Snapshots**
@@ -99,6 +99,13 @@ To add items to roadmap:
 ---
 
 ## Changelog
+
+### 2026-02-15
+
+- Added `/burlaki-rollback` command for checkpoint recovery (MVP)
+  - `--to last-checkpoint`, `--to <story-id>`, `--to <sha>` targets
+  - `--dry-run` for preview, `--yes` to skip confirmation
+  - Uses Git's ORIG_HEAD for recovery (no custom backup system)
 
 ### 2026-02-14
 
