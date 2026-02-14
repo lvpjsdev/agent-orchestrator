@@ -2,6 +2,12 @@
 
 Operational orchestration utilities for agent workflow governance.
 
+## Installation
+
+```bash
+npm install @dummy-products/agent-orchestrator
+```
+
 ## Source of truth
 
 - `agent-skills-matrix.json` - required/optional/forbidden skills per stage.
