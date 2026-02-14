@@ -4,7 +4,7 @@ Guidelines for coding agents operating in this repository.
 
 ## Project Overview
 
-Agent orchestration utilities for workflow governance with Codex/Ralph agents: skills matrix validation, Codex prompt installation, and workflow prompts (`/ao-start`, `/ao-run`, `/ao-continue`, etc.).
+Agent orchestration utilities for workflow governance with Codex/Ralph agents: skills matrix validation, Codex prompt installation, and workflow prompts (`/burlaki-start`, `/burlaki-run`, `/burlaki-continue`, etc.).
 
 ## Build/Lint/Test Commands
 
@@ -210,4 +210,4 @@ argument-hint: "<required-arg> [optional-arg]"
 ---
 ```
 
-Main prompts: `/ao-start`, `/ao-run`, `/ao-continue`, `/ao-human`, `/ao-gate`
+Main prompts: `/burlaki-start`, `/burlaki-run`, `/burlaki-continue`, `/burlaki-human`, `/burlaki-gate`

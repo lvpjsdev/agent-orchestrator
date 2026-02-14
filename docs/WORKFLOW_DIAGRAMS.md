@@ -1,6 +1,6 @@
 # Compound Engineering Workflow Diagrams
 
-Visual reference for the agent-orchestrator workflow.
+Visual reference for the burlaki workflow.
 
 ---
 
@@ -14,7 +14,7 @@ Visual reference for the agent-orchestrator workflow.
 │                                                                                  │
 │   ┌─────────────────────────────────────────────────────────────────────────┐   │
 │   │                                                                          │   │
-│   │     /ao-start          /ao-run              COMPOUND                     │   │
+│   │     /burlaki-start          /burlaki-run              COMPOUND                     │   │
 │   │         │                  │                    │                        │   │
 │   │         ▼                  ▼                    ▼                        │   │
 │   │     ┌──────┐          ┌──────┐            ┌──────┐                       │   │
@@ -39,7 +39,7 @@ Visual reference for the agent-orchestrator workflow.
 
 ---
 
-## /ao-start Phases
+## /burlaki-start Phases
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -62,7 +62,7 @@ Visual reference for the agent-orchestrator workflow.
 │  Agent: planner                                                  │
 │  Input: {{plan}}                                                 │
 │  Output: .agents/tasks/prd.json (atomic stories, < 1 hour each)  │
-│  Status: done → ready for /ao-run                                │
+│  Status: done → ready for /burlaki-run                                │
 ├─────────────────────────────────────────────────────────────────┤
 │  HANDOFF CHAIN: {{brainstorm}} ──► {{plan}} ──► {{prd}}          │
 └─────────────────────────────────────────────────────────────────┘
@@ -70,7 +70,7 @@ Visual reference for the agent-orchestrator workflow.
 
 ---
 
-## /ao-run Per-Story Loop
+## /burlaki-run Per-Story Loop
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -115,7 +115,7 @@ Visual reference for the agent-orchestrator workflow.
 
 ---
 
-## /ao-continue Recovery
+## /burlaki-continue Recovery
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -131,7 +131,7 @@ Visual reference for the agent-orchestrator workflow.
 │  └──────┬──────┘                                                │
 │         ↓                                                        │
 │  ┌─────────────┐                                                │
-│  │ CHECKPOINT  │  Create [ao-checkpoint] commit if changes       │
+│  │ CHECKPOINT  │  Create [burlaki-checkpoint] commit if changes       │
 │  └──────┬──────┘                                                │
 │         ↓                                                        │
 │  ┌─────────────┐                                                │
@@ -154,7 +154,7 @@ Visual reference for the agent-orchestrator workflow.
 │  LEARNINGS FEEDBACK LOOP                                         │
 │                                                                  │
 │  ┌────────────┐    ┌────────────┐    ┌────────────┐             │
-│  │  /ao-run   │───►│  COMPOUND  │───►│ docs/      │             │
+│  │  /burlaki-run   │───►│  COMPOUND  │───►│ docs/      │             │
 │  │  executes  │    │  extracts  │    │ solutions/ │             │
 │  │  stories   │    │  patterns  │    │ learnings  │             │
 │  └────────────┘    └────────────┘    └─────┬──────┘             │
@@ -164,7 +164,7 @@ Visual reference for the agent-orchestrator workflow.
 │              │                                                   │
 │              ▼                                                   │
 │  ┌────────────────────────────────────────────────────────────┐ │
-│  │  NEXT /ao-start                                             │ │
+│  │  NEXT /burlaki-start                                             │ │
 │  │       │                                                     │ │
 │  │       ▼                                                     │ │
 │  │  Phase 2 (PLAN) searches docs/solutions/                   │ │
@@ -186,14 +186,14 @@ Visual reference for the agent-orchestrator workflow.
 
 ```
 ┌────────────┐    ┌────────────┐    ┌────────────┐    ┌────────────┐
-│ BRAINSTORM │───►│   PLAN     │───►│    PRD     │───►│  /ao-run   │
+│ BRAINSTORM │───►│   PLAN     │───►│    PRD     │───►│  /burlaki-run   │
 │    .md     │    │    .md     │    │   .json    │    │   loop     │
 └────────────┘    └────────────┘    └────────────┘    └────────────┘
       │                 │                 │                 │
       ▼                 ▼                 ▼                 ▼
  resume from       resume from       resume from      resume from
  Phase 1           Phase 2           Phase 3          story checkpoint
- (brainstorm)      (plan)            (prd)            [ao-checkpoint]
+ (brainstorm)      (plan)            (prd)            [burlaki-checkpoint]
 ```
 
 ---
@@ -202,10 +202,10 @@ Visual reference for the agent-orchestrator workflow.
 
 ```bash
 # Find all checkpoints
-git log --oneline --grep='\[ao-checkpoint\]'
+git log --oneline --grep='\[burlaki-checkpoint\]'
 
 # Restore to last checkpoint
-git reset --hard $(git log --grep='\[ao-checkpoint\]' -n 1 --format=%H)
+git reset --hard $(git log --grep='\[burlaki-checkpoint\]' -n 1 --format=%H)
 
 # Restore to specific checkpoint
 git reset --hard <sha>

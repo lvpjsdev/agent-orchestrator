@@ -10,11 +10,11 @@ Roadmap for compound engineering workflow automation.
 
 ### v0.1 — Core Workflow
 
-- [x] `/ao-start` — Brainstorm → Plan → PRD pipeline with swarm research
-- [x] `/ao-run` — Execution with verify step (Antfarm pattern)
-- [x] `/ao-continue` — Resume with validation and checkpoints
+- [x] `/burlaki-start` — Brainstorm → Plan → PRD pipeline with swarm research
+- [x] `/burlaki-run` — Execution with verify step (Antfarm pattern)
+- [x] `/burlaki-continue` — Resume with validation and checkpoints
 - [x] Validation swarm (code vs PRD, git sync, tag accuracy)
-- [x] Checkpoint system with `[ao-checkpoint]` prefix
+- [x] Checkpoint system with `[burlaki-checkpoint]` prefix
 - [x] Configurable severe drift handling
 
 ---
@@ -22,7 +22,7 @@ Roadmap for compound engineering workflow automation.
 ## In Progress 🚧
 
 - [ ] Integration with compound-engineering-plugin agents
-- [ ] `/ao-human` — Human escalation handler
+- [ ] `/burlaki-human` — Human escalation handler
 - [ ] Metrics collection and logging
 
 ---
@@ -32,7 +32,7 @@ Roadmap for compound engineering workflow automation.
 ### v0.2 — Enhanced Recovery
 
 - [ ] **Rollback System**
-  - [ ] `/ao-rollback --to <checkpoint>` command
+  - [ ] `/burlaki-rollback --to <checkpoint>` command
   - [ ] Rollback to specific story state
   - [ ] Rollback to last checkpoint
   - [ ] Rollback with artifact preservation
@@ -40,14 +40,14 @@ Roadmap for compound engineering workflow automation.
   
   ```bash
   # Examples:
-  /ao-rollback --to last-checkpoint
-  /ao-rollback --to auth-003
-  /ao-rollback --to abc1234
-  /ao-rollback --keep-artifacts  # Keep brainstorm/plan, reset PRD
+  /burlaki-rollback --to last-checkpoint
+  /burlaki-rollback --to auth-003
+  /burlaki-rollback --to abc1234
+  /burlaki-rollback --keep-artifacts  # Keep brainstorm/plan, reset PRD
   ```
 
 - [ ] **State Snapshots**
-  - [ ] Periodic auto-snapshots during /ao-run
+  - [ ] Periodic auto-snapshots during /burlaki-run
   - [ ] Snapshot before each story start
   - [ ] Snapshot retention policy (configurable)
   - [ ] Snapshot diff view
@@ -102,9 +102,9 @@ To add items to roadmap:
 
 ### 2026-02-14
 
-- Added `/ao-start` with brainstorm → plan → PRD phases
-- Added `/ao-run` with verify step (inspired by Antfarm)
-- Added `/ao-continue` with validation and checkpoints
+- Added `/burlaki-start` with brainstorm → plan → PRD phases
+- Added `/burlaki-run` with verify step (inspired by Antfarm)
+- Added `/burlaki-continue` with validation and checkpoints
 - Added `--from <phase>` flag for explicit resume point
 - Removed external plugin dependencies (uses built-in agents)
 - Added `WORKFLOW_DIAGRAMS.md` for visual reference

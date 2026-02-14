@@ -14,4 +14,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Agent skills matrix JSON configuration
 - Skills gate CLI for workflow governance
 - Codex prompts installation script
-- Slash commands: `/ao-start`, `/ao-run`, `/ao-continue`, `/ao-human`, `/ao-gate`, `/ao-matrix`, `/ao-onboard`
+- Slash commands: `/burlaki-start`, `/burlaki-run`, `/burlaki-continue`, `/burlaki-human`, `/burlaki-gate`, `/burlaki-matrix`, `/burlaki-onboard`
