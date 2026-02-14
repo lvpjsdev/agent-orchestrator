@@ -1,0 +1,88 @@
+{
+  "version": "1.0",
+  "project": "burlaki-builds",
+  "description": "Настройка NPM и Docker сборки с GitHub Actions CI/CD",
+  "scope": {
+    "in": [
+      "NPM пакет с TypeScript/JavaScript",
+      "Docker образ с CLI",
+      "GitHub Actions пайплайн"
+    ],
+    "out": [
+      "Монорепо (пока не нужно)",
+      "Сложная инфраструктура"
+    ]
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "decision": "TypeScript библиотека",
+      "rationale": "Типизация для надежности и DX"
+    },
+    {
+      "id": "D2",
+      "decision": "esbuild для сборки",
+      "rationale": "Быстрее чем tsc, простая настройка"
+    },
+    {
+      "id": "D3",
+      "decision": "GitHub Registry для Docker",
+      "rationale": "Интегрировано с GitHub, не нужно отдельные аккаунты"
+    }
+  ],
+  "stories": [
+    {
+      "id": "S1",
+      "title": "Настроить TypeScript и esbuild для NPM пакета",
+      "description": "Настроить tsconfig.json, esbuild.config.js, обновить package.json с правильными exports и типами",
+      "verification": [
+        "npm run build - должен создать dist/",
+        "Проверить что exports работают"
+      ],
+      "priority": "high",
+      "status": "open"
+    },
+    {
+      "id": "S2",
+      "title": "Настроить Docker образ",
+      "description": "Создать Dockerfile с Node.js, настроить ENTRYPOINT на CLI скрипт",
+      "verification": [
+        "docker build . -t burlaki",
+        "docker run burlaki --help"
+      ],
+      "priority": "high",
+      "status": "open"
+    },
+    {
+      "id": "S3",
+      "title": "Настроить GitHub Actions CI/CD",
+      "description": "Создать workflow для NPM publish и Docker build + push",
+      "verification": [
+        "Проверить .github/workflows/*.yml",
+        "Проверить что secrets настроены"
+      ],
+      "priority": "high",
+      "status": "open"
+    },
+    {
+      "id": "S4",
+      "title": "Добавить скрипты сборки и документацию",
+      "description": "Добавить npm run build, prepublishOnly, обновить README",
+      "verification": [
+        "npm run build выполняется без ошибок",
+        "README содержит инструкции по установке"
+      ],
+      "priority": "medium",
+      "status": "open"
+    }
+  ],
+  "escalations": [],
+  "artifacts": [],
+  "context": {
+    "references": [
+      "package.json - текущая структура",
+      "scripts/skills-gate.mjs - CLI скрипт для упаковки",
+      "scripts/install-prompts.mjs - второй скрипт"
+    ]
+  }
+}
