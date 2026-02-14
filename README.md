@@ -8,6 +8,20 @@ Operational orchestration utilities for agent workflow governance.
 npm install @lvpjsdev/agent-orchestrator
 ```
 
+## Usage
+
+```js
+import matrix from '@lvpjsdev/agent-orchestrator';
+
+console.log(matrix.stages.coder.requiredSkills);
+```
+
+Or import the matrix directly:
+
+```js
+import matrix from '@lvpjsdev/agent-orchestrator/matrix';
+```
+
 ## Source of truth
 
 - `agent-skills-matrix.json` - required/optional/forbidden skills per stage.

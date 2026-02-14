@@ -3,13 +3,14 @@
   "version": "0.1.0",
   "description": "Operational orchestration utilities for agent workflow governance",
   "type": "module",
-  "main": "./agent-skills-matrix.json",
+  "main": "./matrix.mjs",
   "exports": {
-    ".": "./agent-skills-matrix.json",
-    "./matrix": "./agent-skills-matrix.json",
+    ".": "./matrix.mjs",
+    "./matrix": "./matrix.mjs",
     "./cli": "./scripts/skills-gate.mjs"
   },
   "files": [
+    "matrix.mjs",
     "agent-skills-matrix.json",
     "scripts/",
     "prompts/"
