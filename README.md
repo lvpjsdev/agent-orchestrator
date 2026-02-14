@@ -1,17 +1,17 @@
-# @lvpjsdev/agent-orchestrator
+# @lvpjsdev/burlaki
 
-Operational orchestration utilities for agent workflow governance.
+Burlaki - Agent workflow orchestration utilities for skills, prompts, and governance.
 
 ## Installation
 
 ```bash
-npm install @lvpjsdev/agent-orchestrator
+npm install @lvpjsdev/burlaki
 ```
 
 ## Usage
 
 ```js
-import matrix from '@lvpjsdev/agent-orchestrator';
+import matrix from '@lvpjsdev/burlaki';
 
 console.log(matrix.stages.coder.requiredSkills);
 ```
@@ -19,7 +19,7 @@ console.log(matrix.stages.coder.requiredSkills);
 Or import the matrix directly:
 
 ```js
-import matrix from '@lvpjsdev/agent-orchestrator/matrix';
+import matrix from '@lvpjsdev/burlaki/matrix';
 ```
 
 ## Compound Engineering Workflow
@@ -54,7 +54,7 @@ See [WORKFLOW_DIAGRAMS.md](docs/WORKFLOW_DIAGRAMS.md) for visual reference.
 ## CLI
 
 ```bash
-npx ao-skills-gate --matrix ./agent-skills-matrix.json --stage coder --agent claude
+npx burlaki-gate --matrix ./agent-skills-matrix.json --stage coder --agent claude
 ```
 
 Optional flags:

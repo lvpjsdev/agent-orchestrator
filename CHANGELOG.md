@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - 2026-02-14
 
+### Breaking Changes
+
+- Package renamed: `@lvpjsdev/agent-orchestrator` → `@lvpjsdev/burlaki`
+- CLI command renamed: `ao-skills-gate` → `burlaki-gate`
+
+#### Migration Guide
+
+1. Uninstall old package and install new:
+   ```bash
+   npm uninstall @lvpjsdev/agent-orchestrator
+   npm install @lvpjsdev/burlaki
+   ```
+
+2. Update import statements:
+   ```js
+   // Old
+   import matrix from '@lvpjsdev/agent-orchestrator';
+   
+   // New
+   import matrix from '@lvpjsdev/burlaki';
+   ```
+
+3. Update CLI calls in scripts/CI:
+   ```bash
+   # Old
+   npx ao-skills-gate --matrix ./agent-skills-matrix.json --stage coder
+   
+   # New
+   npx burlaki-gate --matrix ./agent-skills-matrix.json --stage coder
+   ```
 
 ### Added
 
