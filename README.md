@@ -1,6 +1,12 @@
-# agent-orchestrator
+# @lvpjsdev/agent-orchestrator
 
 Operational orchestration utilities for agent workflow governance.
+
+## Installation
+
+```bash
+npm install @lvpjsdev/agent-orchestrator
+```
 
 ## Source of truth
 
@@ -9,7 +15,7 @@ Operational orchestration utilities for agent workflow governance.
 ## CLI
 
 ```bash
-pnpm -C packages/agent-orchestrator skills:gate -- --matrix ./agent-skills-matrix.json --stage coder --agent claude
+npx @lvpjsdev/agent-orchestrator/cli --matrix ./agent-skills-matrix.json --stage coder --agent claude
 ```
 
 Optional flags:
@@ -28,20 +34,18 @@ npx skills add obra/superpowers@brainstorming -g -y
 
 ## Codex prompts (slash commands)
 
-This repo ships shared Codex prompt files (slash commands) under:
-
-- `packages/agent-orchestrator/prompts/codex/*.md`
+This package ships shared Codex prompt files (slash commands).
 
 Install them into your local Codex prompt directory (usually `~/.codex/prompts`):
 
 ```bash
-pnpm -C packages/agent-orchestrator prompts:install
+npx @lvpjsdev/agent-orchestrator/cli --install-prompts
 ```
 
 Overwrite existing files:
 
 ```bash
-pnpm -C packages/agent-orchestrator prompts:install -- --force
+npx @lvpjsdev/agent-orchestrator/cli --install-prompts --force
 ```
 
 Main workflow prompts:
@@ -57,11 +61,6 @@ Workflow source-of-truth policy:
 - Specs are a secondary reference for anti-drift checks.
 - If PRD and specs diverge, execution follows approved PRD and drift is tagged (recommended: `@spec-drift`).
 
-Git flow policy:
+## License
 
-- `main`: protected production branch, no direct pushes.
-- `develop`: integration branch for test-stand deploy.
-- `feature/<story-id>-<slug>`: one branch per story/task.
-- Each new feature branch must be created with a dedicated worktree.
-- Recommended command:
-  `git worktree add .codex/worktrees/<story-id> -b feature/<story-id>-<slug> develop`
+MIT

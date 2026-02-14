@@ -1,14 +1,41 @@
 {
-  "name": "@dummy-products/agent-orchestrator",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@lvpjsdev/agent-orchestrator",
+  "version": "0.1.0",
+  "description": "Operational orchestration utilities for agent workflow governance",
   "type": "module",
+  "main": "./agent-skills-matrix.json",
   "exports": {
+    ".": "./agent-skills-matrix.json",
     "./matrix": "./agent-skills-matrix.json",
     "./cli": "./scripts/skills-gate.mjs"
   },
+  "files": [
+    "agent-skills-matrix.json",
+    "scripts/",
+    "prompts/"
+  ],
   "scripts": {
     "skills:gate": "node scripts/skills-gate.mjs",
-    "prompts:install": "node scripts/install-codex-prompts.mjs"
-  }
+    "prompts:install": "node scripts/install-codex-prompts.mjs",
+    "prepublishOnly": "node -e \"console.log('Publishing @lvpjsdev/agent-orchestrator...')\""
+  },
+  "keywords": [
+    "agent",
+    "orchestration",
+    "ai",
+    "workflow",
+    "claude",
+    "codex",
+    "llm"
+  ],
+  "author": "lvpjsdev",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lvpjsdev/agent-orchestrator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lvpjsdev/agent-orchestrator/issues"
+  },
+  "homepage": "https://github.com/lvpjsdev/agent-orchestrator#readme"
 }
