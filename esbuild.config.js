@@ -1,39 +1,39 @@
-import { build } from "esbuild";
-import { copyFileSync, mkdirSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { build } from 'esbuild';
+import { copyFileSync, mkdirSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 
-const distDir = resolve("dist");
+const DIST_DIR = resolve('dist');
+
+const ASSETS = [
+  {
+    from: 'agent-skills-matrix.json',
+    to: 'agent-skills-matrix.json',
+  },
+  {
+    from: 'scripts/skills-gate.mjs',
+    to: 'scripts/skills-gate.mjs',
+  },
+  {
+    from: 'scripts/install-prompts.mjs',
+    to: 'scripts/install-prompts.mjs',
+  },
+];
 
 async function main() {
   await build({
     entryPoints: {
-      index: "src/index.ts"
+      index: 'src/index.ts',
     },
-    outdir: distDir,
+    outdir: DIST_DIR,
     bundle: true,
-    format: "esm",
-    platform: "node",
-    target: ["node18"],
-    sourcemap: true
+    format: 'esm',
+    platform: 'node',
+    target: ['node18'],
+    sourcemap: true,
   });
 
-  const assets = [
-    {
-      from: "agent-skills-matrix.json",
-      to: "agent-skills-matrix.json"
-    },
-    {
-      from: "scripts/skills-gate.mjs",
-      to: "scripts/skills-gate.mjs"
-    },
-    {
-      from: "scripts/install-codex-prompts.mjs",
-      to: "scripts/install-codex-prompts.mjs"
-    }
-  ];
-
-  for (const asset of assets) {
-    const target = resolve(distDir, asset.to);
+  for (const asset of ASSETS) {
+    const target = resolve(DIST_DIR, asset.to);
     mkdirSync(dirname(target), { recursive: true });
     copyFileSync(resolve(asset.from), target);
   }
