@@ -5,6 +5,7 @@ argument-hint: "<product request>"
 
 # Burlaki Start — Compound Engineering Workflow
 
+
 Multi-agent orchestrated workflow with fresh contexts and explicit handoffs.
 
 ## Input
