@@ -1,6 +1,26 @@
-# agent-orchestrator
+# @lvpjsdev/agent-orchestrator
 
 Operational orchestration utilities for agent workflow governance.
+
+## Installation
+
+```bash
+npm install @lvpjsdev/agent-orchestrator
+```
+
+## Usage
+
+```js
+import matrix from '@lvpjsdev/agent-orchestrator';
+
+console.log(matrix.stages.coder.requiredSkills);
+```
+
+Or import the matrix directly:
+
+```js
+import matrix from '@lvpjsdev/agent-orchestrator/matrix';
+```
 
 ## Compound Engineering Workflow
 
@@ -33,7 +53,7 @@ See [WORKFLOW_DIAGRAMS.md](docs/WORKFLOW_DIAGRAMS.md) for visual reference.
 ## CLI
 
 ```bash
-pnpm -C packages/agent-orchestrator skills:gate -- --matrix ./agent-skills-matrix.json --stage coder --agent claude
+npx ao-skills-gate --matrix ./agent-skills-matrix.json --stage coder --agent claude
 ```
 
 Optional flags:
@@ -59,13 +79,13 @@ This repo ships shared Codex prompt files under:
 Install them into your local Codex prompt directory (usually `~/.codex/prompts`):
 
 ```bash
-pnpm -C packages/agent-orchestrator prompts:install
+npx ao-skills-gate --install-prompts
 ```
 
 Overwrite existing files:
 
 ```bash
-pnpm -C packages/agent-orchestrator prompts:install -- --force
+npx ao-skills-gate --install-prompts --force
 ```
 
 ## Workflow Policies
@@ -97,6 +117,10 @@ git log --grep='[ao-checkpoint]'
 # Restore
 git reset --hard <checkpoint-sha>
 ```
+
+## License
+
+MIT
 
 ## Roadmap
 
