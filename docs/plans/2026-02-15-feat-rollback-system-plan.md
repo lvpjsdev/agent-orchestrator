@@ -42,7 +42,7 @@ Where `<target>` is:
 
 ### Pipeline
 
-```
+```text
 DETECT → VALIDATE → PREVIEW → CONFIRM → EXECUTE → VERIFY
 ```
 
@@ -83,7 +83,7 @@ echo "Rollback complete. Recovery: git reset --hard ORIG_HEAD"
 
 ### File to Create
 
-```
+```text
 prompts/codex/burlaki-rollback.md
 ```
 
