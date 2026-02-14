@@ -105,9 +105,7 @@ if [ -n "$DIRTY" ]; then
   echo "Uncommitted files:"
   echo "$DIRTY" | head -10 | sed 's/^/  /'
   echo ""
-  echo "Options:"
-  echo "  1. Commit or stash changes, then retry"
-  echo "  2. Use --force to discard changes (not recommended)"
+  echo "Fix: Commit or stash changes, then retry"
   exit 1
 fi
 
@@ -170,16 +168,14 @@ if [ "$YES" != true ]; then
   echo "This will reset HEAD, index, and working tree to $TARGET_SHORT"
   echo ""
   
-  # Use AskUserQuestion tool
-  Question: "Proceed with rollback? This cannot be easily undone."
-  
-  Options:
-  1. Yes, rollback to $TARGET_SHORT
-  2. Cancel
-  
-  If user selects "Cancel":
-    echo "Rollback cancelled."
-    exit 0
+  # PSEUDOCODE: Use AskUserQuestion tool
+  # Question: "Proceed with rollback? This cannot be easily undone."
+  # Options:
+  #   1. Yes, rollback to $TARGET_SHORT
+  #   2. Cancel
+  # If user selects "Cancel":
+  #   echo "Rollback cancelled."
+  #   exit 0
 fi
 ```
 
