@@ -26,22 +26,57 @@ Optional flags:
 npx skills add obra/superpowers@brainstorming -g -y
 ```
 
-## Codex prompts (slash commands)
+## Agent prompts/skills
 
-This repo ships shared Codex prompt files (slash commands) under:
+This repo ships shared prompts and skills for multiple AI coding tools:
 
-- `packages/agent-orchestrator/prompts/codex/*.md`
+- `prompts/codex/*.md` - Codex slash commands
+- `prompts/opencode/*/SKILL.md` - OpenCode skills
+- `prompts/claude/*/SKILL.md` - Claude Code skills
 
-Install them into your local Codex prompt directory (usually `~/.codex/prompts`):
+### Local install (default)
+
+Installs into project directory:
 
 ```bash
-pnpm -C packages/agent-orchestrator prompts:install
+# Codex → .codex/prompts/
+pnpm prompts:install:codex
+
+# OpenCode → .opencode/skills/
+pnpm prompts:install:opencode
+
+# Claude Code → .claude/skills/
+pnpm prompts:install:claude
+
+# All at once
+pnpm prompts:install:all
 ```
 
-Overwrite existing files:
+### Global install
+
+Installs into home directory:
 
 ```bash
-pnpm -C packages/agent-orchestrator prompts:install -- --force
+# Codex → ~/.codex/prompts/
+pnpm prompts:install:codex:global
+
+# OpenCode → ~/.config/opencode/skills/
+pnpm prompts:install:opencode:global
+
+# Claude Code → ~/.claude/skills/
+pnpm prompts:install:claude:global
+
+# All at once
+pnpm prompts:install:all:global
+```
+
+### Overwrite existing
+
+Add `--force` flag:
+
+```bash
+pnpm prompts:install:codex -- --force
+pnpm prompts:install:codex:global -- --force
 ```
 
 Main workflow prompts:
