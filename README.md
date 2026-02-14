@@ -34,16 +34,16 @@ See [WORKFLOW_DIAGRAMS.md](docs/WORKFLOW_DIAGRAMS.md) for visual reference.
 
 | Command | Phase | Purpose | Output |
 |---------|-------|---------|--------|
-| `/ao-start` | PLAN | Brainstorm → Plan → PRD decomposition | `docs/brainstorms/`, `docs/plans/`, `.agents/tasks/prd.json` |
-| `/ao-run` | WORK | Execute stories with verify step | Code, tests, commits |
-| `/ao-run` (end) | LEARN | Extract patterns, document gotchas | `docs/solutions/<category>/` |
-| `/ao-continue` | RECOVER | Resume with validation and checkpoints | Checkpoints, state fixes |
-| `/ao-human` | ESCALATE | List tasks tagged for human review | Tasks with `@human` tag |
+| `/burlaki-start` | PLAN | Brainstorm → Plan → PRD decomposition | `docs/brainstorms/`, `docs/plans/`, `.agents/tasks/prd.json` |
+| `/burlaki-run` | WORK | Execute stories with verify step | Code, tests, commits |
+| `/burlaki-run` (end) | LEARN | Extract patterns, document gotchas | `docs/solutions/<category>/` |
+| `/burlaki-continue` | RECOVER | Resume with validation and checkpoints | Checkpoints, state fixes |
+| `/burlaki-human` | ESCALATE | List tasks tagged for human review | Tasks with `@human` tag |
 
 ### Compound Feedback Loop
 
 ```
-/ao-run ──► COMPOUND ──► docs/solutions/ ──► next /ao-start (uses learnings)
+/burlaki-run ──► COMPOUND ──► docs/solutions/ ──► next /burlaki-start (uses learnings)
 ```
 
 ## Source of Truth
@@ -54,7 +54,7 @@ See [WORKFLOW_DIAGRAMS.md](docs/WORKFLOW_DIAGRAMS.md) for visual reference.
 ## CLI
 
 ```bash
-npx burlaki-gate --matrix ./agent-skills-matrix.json --stage coder --agent claude
+npx burlaki-skills-gate --matrix ./agent-skills-matrix.json --stage coder --agent claude
 ```
 
 Optional flags:
@@ -155,11 +155,11 @@ git worktree add .codex/worktrees/<story-id> -b feature/<story-id>-<slug> develo
 
 ### Checkpoints
 
-Recovery checkpoints use `[ao-checkpoint]` prefix:
+Recovery checkpoints use `[burlaki-checkpoint]` prefix:
 
 ```bash
 # Find checkpoints
-git log --grep='[ao-checkpoint]'
+git log --grep='[burlaki-checkpoint]'
 
 # Restore
 git reset --hard <checkpoint-sha>

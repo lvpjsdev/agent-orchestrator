@@ -3,22 +3,26 @@
   "version": "0.1.0",
   "description": "Burlaki - Agent workflow orchestration utilities for skills, prompts, and governance",
   "type": "module",
-  "main": "./matrix.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./matrix.mjs",
-    "./matrix": "./matrix.mjs",
-    "./cli": "./scripts/skills-gate.mjs"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./matrix": "./dist/agent-skills-matrix.json",
+    "./cli": "./dist/scripts/skills-gate.mjs"
   },
   "bin": {
-    "burlaki-gate": "./scripts/skills-gate.mjs"
+    "burlaki-skills-gate": "./dist/scripts/skills-gate.mjs"
   },
   "files": [
-    "matrix.mjs",
+    "dist/",
     "agent-skills-matrix.json",
-    "scripts/",
     "prompts/"
   ],
   "scripts": {
+    "build": "node esbuild.config.js && tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build",
     "skills:gate": "node scripts/skills-gate.mjs",
     "prompts:install": "node scripts/install-prompts.mjs --tool codex && node scripts/install-prompts.mjs --tool opencode && node scripts/install-prompts.mjs --tool claude",
     "prompts:install:codex": "node scripts/install-prompts.mjs --tool codex",
@@ -27,8 +31,11 @@
     "prompts:install:codex:global": "node scripts/install-prompts.mjs --tool codex --global",
     "prompts:install:opencode:global": "node scripts/install-prompts.mjs --tool opencode --global",
     "prompts:install:claude:global": "node scripts/install-prompts.mjs --tool claude --global",
-    "prompts:install:global": "node scripts/install-prompts.mjs --tool codex --global && node scripts/install-prompts.mjs --tool opencode --global && node scripts/install-prompts.mjs --tool claude --global",
-    "prepublishOnly": "node --check matrix.mjs && node --check scripts/skills-gate.mjs"
+    "prompts:install:global": "node scripts/install-prompts.mjs --tool codex --global && node scripts/install-prompts.mjs --tool opencode --global && node scripts/install-prompts.mjs --tool claude --global"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "typescript": "^5.7.3"
   },
   "keywords": [
     "agent",

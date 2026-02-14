@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Breaking Changes
 
 - Package renamed: `@lvpjsdev/agent-orchestrator` → `@lvpjsdev/burlaki`
-- CLI command renamed: `ao-skills-gate` → `burlaki-gate`
+- CLI command renamed: `ao-skills-gate` → `burlaki-skills-gate`
 
 #### Migration Guide
 
@@ -38,12 +38,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
    pnpm dlx ao-skills-gate --matrix ./agent-skills-matrix.json --stage coder
    
    # New
-   pnpm dlx burlaki-gate --matrix ./agent-skills-matrix.json --stage coder
+   pnpm dlx burlaki-skills-gate --matrix ./agent-skills-matrix.json --stage coder
    ```
 
 4. Check and update other files:
 
-   - `package.json` scripts: replace `ao-skills-gate` with `burlaki-gate`
+   - `package.json` scripts: replace `ao-skills-gate` with `burlaki-skills-gate`
    - CI/CD configurations (GitHub Actions, GitLab CI, etc.)
    - Configuration files referencing the package
    - Comments and documentation in your project
@@ -54,4 +54,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Agent skills matrix JSON configuration
 - Skills gate CLI for workflow governance
 - Codex prompts installation script
-- Slash commands: `/ao-start`, `/ao-run`, `/ao-continue`, `/ao-human`, `/ao-gate`, `/ao-matrix`, `/ao-onboard`
+- Slash commands: `/burlaki-start`, `/burlaki-run`, `/burlaki-continue`, `/burlaki-human`, `/burlaki-skills-gate`, `/burlaki-matrix`, `/burlaki-onboard`
