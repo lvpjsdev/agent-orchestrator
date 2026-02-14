@@ -17,8 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 1. Uninstall old package and install new:
 
    ```bash
-   npm uninstall @lvpjsdev/agent-orchestrator
-   npm install @lvpjsdev/burlaki
+   pnpm remove @lvpjsdev/agent-orchestrator
+   pnpm add @lvpjsdev/burlaki
    ```
 
 2. Update import statements:
@@ -35,10 +35,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
    ```bash
    # Old
-   npx ao-skills-gate --matrix ./agent-skills-matrix.json --stage coder
+   pnpm dlx ao-skills-gate --matrix ./agent-skills-matrix.json --stage coder
    
    # New
-   npx burlaki-gate --matrix ./agent-skills-matrix.json --stage coder
+   pnpm dlx burlaki-gate --matrix ./agent-skills-matrix.json --stage coder
    ```
 
 ### Added
