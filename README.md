@@ -49,6 +49,7 @@ See [WORKFLOW_DIAGRAMS.md](docs/WORKFLOW_DIAGRAMS.md) for visual reference.
 ## Source of Truth
 
 - `agent-skills-matrix.json` - required/optional/forbidden skills per stage
+- `.agents/skills/` - local skill definitions
 
 ## CLI
 
@@ -61,14 +62,17 @@ Optional flags:
 - `--log <path>`: enables detection of actually used/forbidden skills from run logs
 - `--policies <csv>`: passes satisfied policy checks (needed for stages with `requiredPolicies`)
 
-## Manager Stage Dependency
+## Local Skills
 
-- `brainstorming` skill is required before `/ao-start` PRD creation
-- Install command:
+All required skills are included in `.agents/skills/`:
 
-```bash
-npx skills add obra/superpowers@brainstorming -g -y
-```
+| Stage | Required Skills |
+|-------|-----------------|
+| manager | brainstorming, prd |
+| coder | coding-agent, react-best-practices, typescript-advanced-types |
+| tester | e2e-testing-patterns, playwright |
+| reviewer | (none) |
+| devops | (none) |
 
 ## Agent prompts/skills
 
@@ -143,10 +147,11 @@ pnpm prompts:install:claude:global -- --force
 - `main`: protected production branch, no direct pushes
 - `develop`: integration branch for test-stand deploy
 - `feature/<story-id>-<slug>`: one branch per story/task
-- Each new feature branch should use a dedicated worktree:
-  ```bash
-  git worktree add .codex/worktrees/<story-id> -b feature/<story-id>-<slug> develop
-  ```
+- Each new feature branch must use a dedicated worktree:
+
+```bash
+git worktree add .codex/worktrees/<story-id> -b feature/<story-id>-<slug> develop
+```
 
 ### Checkpoints
 
@@ -159,10 +164,6 @@ git log --grep='[ao-checkpoint]'
 # Restore
 git reset --hard <checkpoint-sha>
 ```
-
-## License
-
-MIT
 
 ## Roadmap
 
