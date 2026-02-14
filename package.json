@@ -1,14 +1,52 @@
 {
-  "name": "@dummy-products/agent-orchestrator",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@lvpjsdev/agent-orchestrator",
+  "version": "0.1.0",
+  "description": "Operational orchestration utilities for agent workflow governance",
   "type": "module",
+  "main": "./matrix.mjs",
   "exports": {
-    "./matrix": "./agent-skills-matrix.json",
+    ".": "./matrix.mjs",
+    "./matrix": "./matrix.mjs",
     "./cli": "./scripts/skills-gate.mjs"
   },
+  "bin": {
+    "ao-skills-gate": "./scripts/skills-gate.mjs"
+  },
+  "files": [
+    "matrix.mjs",
+    "agent-skills-matrix.json",
+    "scripts/",
+    "prompts/"
+  ],
   "scripts": {
     "skills:gate": "node scripts/skills-gate.mjs",
-    "prompts:install": "node scripts/install-codex-prompts.mjs"
-  }
+    "prompts:install": "node scripts/install-prompts.mjs --tool codex && node scripts/install-prompts.mjs --tool opencode && node scripts/install-prompts.mjs --tool claude",
+    "prompts:install:codex": "node scripts/install-prompts.mjs --tool codex",
+    "prompts:install:opencode": "node scripts/install-prompts.mjs --tool opencode",
+    "prompts:install:claude": "node scripts/install-prompts.mjs --tool claude",
+    "prompts:install:codex:global": "node scripts/install-prompts.mjs --tool codex --global",
+    "prompts:install:opencode:global": "node scripts/install-prompts.mjs --tool opencode --global",
+    "prompts:install:claude:global": "node scripts/install-prompts.mjs --tool claude --global",
+    "prompts:install:global": "node scripts/install-prompts.mjs --tool codex --global && node scripts/install-prompts.mjs --tool opencode --global && node scripts/install-prompts.mjs --tool claude --global",
+    "prepublishOnly": "node --check matrix.mjs && node --check scripts/skills-gate.mjs"
+  },
+  "keywords": [
+    "agent",
+    "orchestration",
+    "ai",
+    "workflow",
+    "claude",
+    "codex",
+    "llm"
+  ],
+  "author": "lvpjsdev",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lvpjsdev/agent-orchestrator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lvpjsdev/agent-orchestrator/issues"
+  },
+  "homepage": "https://github.com/lvpjsdev/agent-orchestrator#readme"
 }

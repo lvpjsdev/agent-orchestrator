@@ -1,6 +1,26 @@
-# agent-orchestrator
+# @lvpjsdev/agent-orchestrator
 
 Operational orchestration utilities for agent workflow governance.
+
+## Installation
+
+```bash
+npm install @lvpjsdev/agent-orchestrator
+```
+
+## Usage
+
+```js
+import matrix from '@lvpjsdev/agent-orchestrator';
+
+console.log(matrix.stages.coder.requiredSkills);
+```
+
+Or import the matrix directly:
+
+```js
+import matrix from '@lvpjsdev/agent-orchestrator/matrix';
+```
 
 ## Compound Engineering Workflow
 
@@ -34,7 +54,7 @@ See [WORKFLOW_DIAGRAMS.md](docs/WORKFLOW_DIAGRAMS.md) for visual reference.
 ## CLI
 
 ```bash
-pnpm skills:gate -- --matrix ./agent-skills-matrix.json --stage coder --agent claude
+npx ao-skills-gate --matrix ./agent-skills-matrix.json --stage coder --agent claude
 ```
 
 Optional flags:
@@ -54,33 +74,73 @@ All required skills are included in `.agents/skills/`:
 | reviewer | (none) |
 | devops | (none) |
 
-## Codex Prompts (Slash Commands)
+## Agent prompts/skills
 
-Prompts located in `prompts/codex/*.md`. Install to `~/.codex/prompts`:
+This repo ships shared prompts and skills for multiple AI coding tools:
+
+- `prompts/codex/*.md` - Codex slash commands
+- `prompts/opencode/*/SKILL.md` - OpenCode skills
+- `prompts/claude/*/SKILL.md` - Claude Code skills
+
+### Local install (default)
+
+Installs into project directory:
 
 ```bash
+# Codex → .codex/prompts/
+pnpm prompts:install:codex
+
+# OpenCode → .opencode/skills/
+pnpm prompts:install:opencode
+
+# Claude Code → .claude/skills/
+pnpm prompts:install:claude
+
+# All at once
 pnpm prompts:install
 ```
 
-Overwrite existing files:
+### Global install
+
+Installs into home directory:
 
 ```bash
-pnpm prompts:install -- --force
+# Codex → ~/.codex/prompts/
+pnpm prompts:install:codex:global
+
+# OpenCode → ~/.config/opencode/skills/
+pnpm prompts:install:opencode:global
+
+# Claude Code → ~/.claude/skills/
+pnpm prompts:install:claude:global
+
+# All at once
+pnpm prompts:install:global
+```
+
+### Overwrite existing
+
+Add `--force` flag:
+
+```bash
+# Local
+pnpm prompts:install:codex -- --force
+pnpm prompts:install:opencode -- --force
+pnpm prompts:install:claude -- --force
+
+# Global
+pnpm prompts:install:codex:global -- --force
+pnpm prompts:install:opencode:global -- --force
+pnpm prompts:install:claude:global -- --force
 ```
 
 ## Workflow Policies
 
-- `/ao-start` - manager stage: run brainstorming first, then create/clarify PRD and task plan.
-- `/ao-run` - start coder loop after PRD approval (default 5 iterations).
-- `/ao-continue` - resume an interrupted loop (default 1 iteration).
-- `/ao-human` - list tasks tagged for human escalation (default tag `@human`).
-- `/ao-gate` - run skills gate validation.
-
 ### Source of Truth
 
-- PRD JSON (`.agents/tasks/prd.json`) is the primary execution source for the loop.
-- Specs are a secondary reference for anti-drift checks.
-- If PRD and specs diverge, execution follows approved PRD and drift is tagged (recommended: `@spec-drift`).
+- PRD JSON (`.agents/tasks/prd.json`) is the primary execution source
+- Specs are a secondary reference for anti-drift checks
+- If PRD and specs diverge, execution follows approved PRD and drift is tagged (`@spec-drift`)
 
 ### Git Flow
 
