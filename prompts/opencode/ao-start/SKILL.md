@@ -27,7 +27,11 @@ npx skills add obra/superpowers@brainstorming -g -y
 ralph prd
 ```
 
-Or pass a direct prompt when supported by your local Ralph setup.
+This runs interactively. If your Ralph setup supports direct prompts, use:
+
+```bash
+ralph prd --prompt "Your product request here"
+```
 
 1) Ensure output PRD path is known (default):
 
@@ -44,7 +48,9 @@ If a different PRD path is used, mention it explicitly.
    - context links for coder
 
 1) If relevant specs exist, link them in task context as reference artifacts.
-   Specs are advisory anti-drift guidance, not the primary execution source.
+   - **Specs**: advisory documents (requirements, API specs, design docs) from `/docs`, `/specs`, design tools (Figma), or issue trackers
+   - Specs are anti-drift guidance, not the primary execution source
+   - Formats: Markdown, OpenAPI/Swagger, Figma links, PDF
 
 **Output**
 

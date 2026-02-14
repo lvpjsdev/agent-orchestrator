@@ -138,7 +138,8 @@ function installSkills(sourceDir, targetDir, force, useSymlinks) {
 
       if (useSymlinks) {
         const relativePath = relative(targetDir, skillSourceDir);
-        symlinkSync(relativePath, skillTargetDir);
+        const linkType = process.platform === 'win32' ? 'junction' : 'dir';
+        symlinkSync(relativePath, skillTargetDir, linkType);
       } else {
         cpSync(skillSourceDir, skillTargetDir, { recursive: true });
       }
