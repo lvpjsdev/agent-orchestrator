@@ -17,9 +17,6 @@ pnpm prompts:install
 
 # Force overwrite existing prompts
 pnpm prompts:install -- --force
-
-# Install brainstorming skill (required for manager stage)
-npx skills add obra/superpowers@brainstorming -g -y
 ```
 
 ### Testing
