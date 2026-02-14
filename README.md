@@ -1,6 +1,6 @@
 # @lvpjsdev/burlaki
 
-Operational orchestration utilities for agent workflow governance.
+Burlaki - Agent workflow orchestration utilities for skills, prompts, and governance.
 
 ## Installation
 

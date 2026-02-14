@@ -1,7 +1,7 @@
 {
   "name": "@lvpjsdev/burlaki",
   "version": "0.1.0",
-  "description": "Operational orchestration utilities for agent workflow governance",
+  "description": "Burlaki - Agent workflow orchestration utilities for skills, prompts, and governance",
   "type": "module",
   "types": "./dist/index.d.ts",
   "exports": {
