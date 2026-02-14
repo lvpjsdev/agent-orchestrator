@@ -1,7 +1,7 @@
 {
-  "name": "@lvpjsdev/agent-orchestrator",
+  "name": "@lvpjsdev/burlaki",
   "version": "0.1.0",
-  "description": "Operational orchestration utilities for agent workflow governance",
+  "description": "Burlaki - Agent workflow orchestration utilities for skills, prompts, and governance",
   "type": "module",
   "main": "./matrix.mjs",
   "exports": {
@@ -10,7 +10,7 @@
     "./cli": "./scripts/skills-gate.mjs"
   },
   "bin": {
-    "ao-skills-gate": "./scripts/skills-gate.mjs"
+    "burlaki-gate": "./scripts/skills-gate.mjs"
   },
   "files": [
     "matrix.mjs",
@@ -43,10 +43,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lvpjsdev/agent-orchestrator.git"
+    "url": "git+https://github.com/lvpjsdev/burlaki.git"
   },
   "bugs": {
-    "url": "https://github.com/lvpjsdev/agent-orchestrator/issues"
+    "url": "https://github.com/lvpjsdev/burlaki/issues"
   },
-  "homepage": "https://github.com/lvpjsdev/agent-orchestrator#readme"
+  "homepage": "https://github.com/lvpjsdev/burlaki#readme"
 }
