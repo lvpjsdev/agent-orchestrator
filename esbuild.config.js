@@ -1,6 +1,6 @@
-import { build } from 'esbuild';
 import { copyFileSync, mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
+import { build } from 'esbuild';
 
 const DIST_DIR = resolve('dist');
 

@@ -1,34 +1,42 @@
 #!/usr/bin/env node
 
-import { cpSync, existsSync, lstatSync, mkdirSync, readdirSync, rmSync, symlinkSync } from "node:fs";
-import { homedir } from "node:os";
-import { dirname, join, resolve, relative } from "node:path";
-import { fileURLToPath } from "node:url";
+import {
+  cpSync,
+  existsSync,
+  lstatSync,
+  mkdirSync,
+  readdirSync,
+  rmSync,
+  symlinkSync,
+} from 'node:fs';
+import { homedir } from 'node:os';
+import { dirname, join, relative, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 function parseArgs(argv) {
   const out = {
     force: false,
     global: false,
-    tool: "",
-    target: "",
+    tool: '',
+    target: '',
   };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
-    if (arg === "--force") {
+    if (arg === '--force') {
       out.force = true;
-    } else if (arg === "--global" || arg === "-g") {
+    } else if (arg === '--global' || arg === '-g') {
       out.global = true;
-    } else if (arg === "--target") {
+    } else if (arg === '--target') {
       const value = argv[i + 1];
-      if (!value || value.startsWith("-")) {
-        throw new Error("Missing value for --target");
+      if (!value || value.startsWith('-')) {
+        throw new Error('Missing value for --target');
       }
       out.target = value;
       i += 1;
-    } else if (arg === "--tool") {
+    } else if (arg === '--tool') {
       const value = argv[i + 1];
-      if (!value || value.startsWith("-")) {
-        throw new Error("Missing value for --tool");
+      if (!value || value.startsWith('-')) {
+        throw new Error('Missing value for --tool');
       }
       out.tool = value;
       i += 1;
@@ -39,12 +47,12 @@ function parseArgs(argv) {
 
 function getLocalTargetDir(tool) {
   switch (tool) {
-    case "codex":
-      return ".codex/prompts";
-    case "opencode":
-      return ".opencode/skills";
-    case "claude":
-      return ".claude/skills";
+    case 'codex':
+      return '.codex/prompts';
+    case 'opencode':
+      return '.opencode/skills';
+    case 'claude':
+      return '.claude/skills';
     default:
       throw new Error(`Unknown tool: ${tool}. Supported: codex, opencode, claude`);
   }
@@ -52,14 +60,14 @@ function getLocalTargetDir(tool) {
 
 function getGlobalTargetDir(tool) {
   switch (tool) {
-    case "codex": {
-      const codeXHome = process.env.CODEX_HOME?.trim() || join(homedir(), ".codex");
-      return join(codeXHome, "prompts");
+    case 'codex': {
+      const codeXHome = process.env.CODEX_HOME?.trim() || join(homedir(), '.codex');
+      return join(codeXHome, 'prompts');
     }
-    case "opencode":
-      return join(homedir(), ".config", "opencode", "skills");
-    case "claude":
-      return join(homedir(), ".claude", "skills");
+    case 'opencode':
+      return join(homedir(), '.config', 'opencode', 'skills');
+    case 'claude':
+      return join(homedir(), '.claude', 'skills');
     default:
       throw new Error(`Unknown tool: ${tool}. Supported: codex, opencode, claude`);
   }
@@ -68,9 +76,13 @@ function getGlobalTargetDir(tool) {
 function installCodexPrompts(sourceDir, targetDir, force) {
   mkdirSync(targetDir, { recursive: true });
 
-  const files = readdirSync(sourceDir).filter((name) => name.endsWith(".md"));
+  const files = readdirSync(sourceDir).filter((name) => name.endsWith('.md'));
   if (files.length === 0) {
-    return { installed: [], skipped: [], failed: [{ name: "none", error: "No .md prompts found" }] };
+    return {
+      installed: [],
+      skipped: [],
+      failed: [{ name: 'none', error: 'No .md prompts found' }],
+    };
   }
 
   const installed = [];
@@ -106,7 +118,11 @@ function installSkills(sourceDir, targetDir, force, useSymlinks) {
     .map((entry) => entry.name);
 
   if (skillDirs.length === 0) {
-    return { installed: [], skipped: [], failed: [{ name: "none", error: "No skill directories found" }] };
+    return {
+      installed: [],
+      skipped: [],
+      failed: [{ name: 'none', error: 'No skill directories found' }],
+    };
   }
 
   const installed = [];
@@ -117,9 +133,9 @@ function installSkills(sourceDir, targetDir, force, useSymlinks) {
     const skillSourceDir = join(sourceDir, skillName);
     const skillTargetDir = join(targetDir, skillName);
 
-    const skillFile = join(skillSourceDir, "SKILL.md");
+    const skillFile = join(skillSourceDir, 'SKILL.md');
     if (!existsSync(skillFile)) {
-      failed.push({ name: skillName, error: "No SKILL.md found" });
+      failed.push({ name: skillName, error: 'No SKILL.md found' });
       continue;
     }
 
@@ -168,7 +184,7 @@ function main() {
   }
 
   if (!args.tool) {
-    console.error("Error: --tool is required. Use: codex, opencode, or claude");
+    console.error('Error: --tool is required. Use: codex, opencode, or claude');
     process.exit(2);
   }
 
@@ -186,7 +202,7 @@ function main() {
   }
 
   let result;
-  if (args.tool === "codex") {
+  if (args.tool === 'codex') {
     result = installCodexPrompts(sourceDir, targetDir, args.force);
   } else {
     result = installSkills(sourceDir, targetDir, args.force, !args.global);
@@ -196,7 +212,7 @@ function main() {
     `${JSON.stringify(
       {
         tool: args.tool,
-        scope: args.global ? "global" : "local",
+        scope: args.global ? 'global' : 'local',
         sourceDir,
         targetDir,
         installed: result.installed,
@@ -204,12 +220,12 @@ function main() {
         failed: result.failed,
         note:
           result.skipped.length > 0
-            ? "Some items already existed; re-run with --force to overwrite."
-            : "",
+            ? 'Some items already existed; re-run with --force to overwrite.'
+            : '',
       },
       null,
-      2
-    )}\n`
+      2,
+    )}\n`,
   );
 
   if (result.failed.length > 0) {
