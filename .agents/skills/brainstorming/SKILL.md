@@ -1,4 +1,6 @@
+---
 name: brainstorming
+---
 
 # Brainstorming
 

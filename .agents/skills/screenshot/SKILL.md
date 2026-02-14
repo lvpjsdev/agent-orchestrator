@@ -1,4 +1,6 @@
+---
 name: screenshot
+---
 
 # Screenshot
 
@@ -10,7 +12,7 @@ Visual verification and documentation of UI state.
 
 ## Capabilities
 
-- Capture full page screenshots
+- Capture full-page screenshots
 - Capture specific elements
 - Compare before/after states
 - Detect visual regressions

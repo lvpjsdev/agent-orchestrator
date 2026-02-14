@@ -1,4 +1,6 @@
+---
 name: openai-docs
+---
 
 # OpenAI Documentation
 
@@ -14,10 +16,16 @@ Working with OpenAI APIs and models.
 ## Chat Completions
 
 ```typescript
+import OpenAI from 'openai';
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 const response = await openai.chat.completions.create({
   model: 'gpt-4o',
   messages: [
-    { role: 'system', content: 'You are a helpful assistant.' },
+    { role: 'developer', content: 'You are a helpful assistant.' },
     { role: 'user', content: 'Hello!' },
   ],
   temperature: 0.7,

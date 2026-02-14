@@ -22,6 +22,7 @@ pnpm prompts:install -- --force
 ### Testing
 
 No test suite configured. When added:
+
 ```bash
 pnpm test                    # Run all tests
 pnpm test -- path/to/test.mjs  # Run single test file
@@ -30,6 +31,7 @@ pnpm test -- path/to/test.mjs  # Run single test file
 ### Linting
 
 No linter configured. Recommended:
+
 ```bash
 pnpm lint        # Check with ESLint
 pnpm lint --fix  # Auto-fix
@@ -121,6 +123,7 @@ try {
 - **feature/&lt;story-id&gt;-&lt;slug&gt;**: One branch per story/task
 
 Each feature branch must use a dedicated worktree:
+
 ```bash
 git worktree add .codex/worktrees/<story-id> -b feature/<story-id>-<slug> develop
 ```

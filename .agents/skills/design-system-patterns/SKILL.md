@@ -1,4 +1,6 @@
+---
 name: design-system-patterns
+---
 
 # Design System Patterns
 

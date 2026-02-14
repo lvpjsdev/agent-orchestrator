@@ -1,4 +1,6 @@
+---
 name: e2e-testing-patterns
+---
 
 # E2E Testing Patterns
 

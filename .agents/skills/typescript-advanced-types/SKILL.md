@@ -1,4 +1,6 @@
+---
 name: typescript-advanced-types
+---
 
 # TypeScript Advanced Types
 

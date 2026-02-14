@@ -1,4 +1,6 @@
+---
 name: chrome-devtools
+---
 
 # Chrome DevTools
 

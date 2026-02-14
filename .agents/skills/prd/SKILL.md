@@ -1,4 +1,6 @@
+---
 name: prd
+---
 
 # PRD (Product Requirements Document)
 

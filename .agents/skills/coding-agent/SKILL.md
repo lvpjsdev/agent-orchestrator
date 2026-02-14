@@ -1,4 +1,6 @@
+---
 name: coding-agent
+---
 
 # Coding Agent
 
