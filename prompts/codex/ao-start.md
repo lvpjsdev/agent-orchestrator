@@ -267,9 +267,9 @@ See [README.md](../../README.md) for the full compound engineering cycle diagram
    ```json
    {
      "version": 1,
-     "created": "2025-02-14T10:00:00Z",
-     "plan": "docs/plans/2025-02-14-feat-user-auth-plan.md",
-     "brainstorm": "docs/brainstorms/2025-02-14-auth-brainstorm.md",
+     "created": "2026-02-14T10:00:00Z",
+     "plan": "docs/plans/2026-02-14-feat-user-auth-plan.md",
+     "brainstorm": "docs/brainstorms/2026-02-14-auth-brainstorm.md",
      "stories": [
        {
          "id": "auth-001",

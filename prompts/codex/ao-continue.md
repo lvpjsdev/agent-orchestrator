@@ -185,8 +185,8 @@ Branch: feature/auth
 Git: clean
 
 Artifacts:
-├── Brainstorm: docs/brainstorms/2025-02-14-auth.md ✓
-├── Plan: docs/plans/2025-02-14-feat-auth-plan.md ✓
+├── Brainstorm: docs/brainstorms/2026-02-14-auth.md ✓
+├── Plan: docs/plans/2026-02-14-feat-auth-plan.md ✓
 └── PRD: .agents/tasks/prd.json ✓
 
 VALIDATION

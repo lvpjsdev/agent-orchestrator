@@ -100,7 +100,7 @@ To add items to roadmap:
 
 ## Changelog
 
-### 2025-02-14
+### 2026-02-14
 
 - Added `/ao-start` with brainstorm → plan → PRD phases
 - Added `/ao-run` with verify step (inspired by Antfarm)

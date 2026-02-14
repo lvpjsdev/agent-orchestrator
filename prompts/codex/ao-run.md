@@ -429,13 +429,13 @@ Log to `.agents/metrics/run-<workflow-id>.json`:
 
 ```json
 {
-  "workflow_id": "auth-feature-2025-02-14",
-  "started": "2025-02-14T10:00:00Z",
-  "completed": "2025-02-14T13:15:00Z",
+  "workflow_id": "auth-feature-2026-02-14",
+  "started": "2026-02-14T10:00:00Z",
+  "completed": "2026-02-14T13:15:00Z",
   "stories": [
     {
       "id": "auth-001",
-      "started": "2025-02-14T10:05:00Z",
+      "started": "2026-02-14T10:05:00Z",
       "implement_min": 25,
       "verify_min": 5,
       "test_min": 10,
