@@ -5,11 +5,12 @@ Operational orchestration utilities for agent workflow governance.
 ## Source of truth
 
 - `agent-skills-matrix.json` - required/optional/forbidden skills per stage.
+- `.agents/skills/` - local skill definitions.
 
 ## CLI
 
 ```bash
-pnpm -C packages/agent-orchestrator skills:gate -- --matrix ./agent-skills-matrix.json --stage coder --agent claude
+pnpm skills:gate -- --matrix ./agent-skills-matrix.json --stage coder --agent claude
 ```
 
 Optional flags:
@@ -17,31 +18,30 @@ Optional flags:
 - `--log <path>`: enables detection of actually used/forbidden skills from run logs.
 - `--policies <csv>`: passes satisfied policy checks (needed for stages with `requiredPolicies`).
 
-## Manager stage dependency
+## Local Skills
 
-- `brainstorming` skill is required before `/ao-start` PRD creation.
-- Install command:
+All required skills are included in `.agents/skills/`:
 
-```bash
-npx skills add obra/superpowers@brainstorming -g -y
-```
+| Stage | Required Skills |
+|-------|-----------------|
+| manager | brainstorming, prd |
+| coder | coding-agent, react-best-practices, typescript-advanced-types |
+| tester | e2e-testing-patterns, playwright |
+| reviewer | (none) |
+| devops | (none) |
 
 ## Codex prompts (slash commands)
 
-This repo ships shared Codex prompt files (slash commands) under:
-
-- `packages/agent-orchestrator/prompts/codex/*.md`
-
-Install them into your local Codex prompt directory (usually `~/.codex/prompts`):
+Prompts located in `prompts/codex/*.md`. Install to `~/.codex/prompts`:
 
 ```bash
-pnpm -C packages/agent-orchestrator prompts:install
+pnpm prompts:install
 ```
 
 Overwrite existing files:
 
 ```bash
-pnpm -C packages/agent-orchestrator prompts:install -- --force
+pnpm prompts:install -- --force
 ```
 
 Main workflow prompts:
@@ -50,14 +50,15 @@ Main workflow prompts:
 - `/ao-run` - start coder loop after PRD approval (default 5 iterations).
 - `/ao-continue` - resume an interrupted loop (default 1 iteration).
 - `/ao-human` - list tasks tagged for human escalation (default tag `@human`).
+- `/ao-gate` - run skills gate validation.
 
-Workflow source-of-truth policy:
+## Workflow source-of-truth policy
 
-- PRD JSON is the primary execution source for the loop.
+- PRD JSON (`.agents/tasks/prd.json`) is the primary execution source for the loop.
 - Specs are a secondary reference for anti-drift checks.
 - If PRD and specs diverge, execution follows approved PRD and drift is tagged (recommended: `@spec-drift`).
 
-Git flow policy:
+## Git flow policy
 
 - `main`: protected production branch, no direct pushes.
 - `develop`: integration branch for test-stand deploy.
