@@ -9,17 +9,22 @@ Resume an interrupted compound engineering workflow. Creates restore point befor
 
 ## Input
 - `--validate-only` — Only validate state, don't resume (no checkpoint needed)
-- `--from <phase>` — Force resume from specific phase
+- `--from <phase>` — Force resume from specific phase: `brainstorm`, `plan`, `prd`, `run`
 - `--no-checkpoint` — Skip checkpoint creation (not recommended)
+
+## Architecture Overview
+
+See [docs/WORKFLOW_DIAGRAMS.md](../../docs/WORKFLOW_DIAGRAMS.md) for visual reference.
+
+**Recovery pipeline:** DETECT → VALIDATE → CHECKPOINT → REPORT → RESUME
 
 ## Configuration
 
 ```json
-// .agents/config.json
+// .agents/config.json (optional)
 {
   "continue": {
     "severe_drift_action": "ask",
-    "auto_checkpoint": true,
     "checkpoint_prefix": "[ao-checkpoint]"
   }
 }
@@ -27,157 +32,8 @@ Resume an interrupted compound engineering workflow. Creates restore point befor
 
 **`severe_drift_action` options:**
 - `"ask"` — Always ask user (default)
-- `"restart"` — Automatically restart workflow
+- `"restart"` — Automatically restart workflow from brainstorm
 - `"force-continue"` — Continue despite issues
-
-## Checkpoint System
-
-### When Checkpoints Are Created
-
-| Situation | Checkpoint? | Why |
-|-----------|-------------|-----|
-| `--validate-only` | No | Read-only, no changes |
-| Drift detected, fixing | Yes | Before modifying PRD |
-| Severe drift, restart | Yes | Before cleaning state |
-| Normal resume | Yes | Before continuing |
-
-### Checkpoint Format
-
-```bash
-git add -A
-git commit -m "[ao-checkpoint] Pre-continue validation snapshot
-
-State at checkpoint:
-- Phase: run
-- Stories done: 4/7
-- Drift detected: yes (2 stories)
-- Action: fix-drift-and-continue
-
-This checkpoint can be used to restore state if continue goes wrong.
-Find with: git log --grep='[ao-checkpoint]'
-Squash with: git rebase -i <before-this-commit>"
-```
-
-### Checkpoint Commands
-
-```bash
-# Find all checkpoints
-git log --oneline --grep='\[ao-checkpoint\]'
-
-# Restore to last checkpoint
-git reset --hard $(git log --grep='\[ao-checkpoint\]' -n 1 --format=%H)
-
-# Restore to specific checkpoint
-git reset --hard <sha>
-
-# Squash checkpoints after feature complete
-git rebase -i develop
-# Mark checkpoint commits as 'squash' or 'fixup'
-```
-
-## Architecture Overview
-
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                        COMPOUND ENGINEERING WORKFLOW                             │
-│                                                                                  │
-│        "Each unit of work should make subsequent units easier"                  │
-│                                                                                  │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│  /ao-start ──► /ao-run ──► COMPOUND ──► (next iteration is easier)             │
-│      │              │           │                                               │
-│      ▼              ▼           ▼                                               │
-│   PLAN          EXECUTE      LEARN                                              │
-│   (WHAT/HOW)    (BUILD)      (COMPOUND)                                         │
-│                                                                                  │
-│                  ▲                                                               │
-│                  │                                                               │
-│           /ao-continue ──► resume from any point                               │
-│                  │                                                               │
-│                  ▼                                                               │
-│           VALIDATE & RECOVER                                                     │
-│                                                                                  │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│  /ao-continue RECOVERY PIPELINE                                                 │
-│  ─────────────────────────────────                                               │
-│                                                                                  │
-│  ┌─────────────────────────────────────────────────────────────────────────┐    │
-│  │  1. DETECT: Where did we stop?                                          │    │
-│  │     • Check artifacts (brainstorm, plan, PRD)                           │    │
-│  │     • Check git state (branch, uncommitted changes)                     │    │
-│  │     • Check story status in PRD                                         │    │
-│  └─────────────────────────────────────────────────────────────────────────┘    │
-│                              │                                                   │
-│                              ▼                                                   │
-│  ┌─────────────────────────────────────────────────────────────────────────┐    │
-│  │  2. VALIDATE: Is state consistent?                                      │    │
-│  │     • Swarm: repo-research-analyst (code vs PRD sync)                   │    │
-│  │     • Swarm: git-history-analyzer (recent changes)                      │    │
-│  │     • Swarm: pattern-recognition-specialist (tag accuracy)              │    │
-│  │                                                                          │    │
-│  │     Uses learnings from docs/solutions/ to detect known drift patterns  │    │
-│  └─────────────────────────────────────────────────────────────────────────┘    │
-│                              │                                                   │
-│                              ▼                                                   │
-│  ┌─────────────────────────────────────────────────────────────────────────┐    │
-│  │  3. CHECKPOINT: Create restore point (if changes needed)                │    │
-│  │     • Format: [ao-checkpoint] Pre-continue validation snapshot          │    │
-│  │     • Find: git log --grep='[ao-checkpoint]'                            │    │
-│  │     • Restore: git reset --hard <sha>                                   │    │
-│  └─────────────────────────────────────────────────────────────────────────┘    │
-│                              │                                                   │
-│                              ▼                                                   │
-│  ┌─────────────────────────────────────────────────────────────────────────┐    │
-│  │  4. REPORT: Show state summary                                          │    │
-│  │     • What's done, what's in progress                                   │    │
-│  │     • Drift findings (if any)                                           │    │
-│  │     • Recommended action based on config                                │    │
-│  └─────────────────────────────────────────────────────────────────────────┘    │
-│                              │                                                   │
-│                              ▼                                                   │
-│  ┌─────────────────────────────────────────────────────────────────────────┐    │
-│  │  5. RESUME: Continue from validated point                               │    │
-│  │     • Hand off to /ao-run from appropriate story                        │    │
-│  │     • Or restart from /ao-start if severe drift                         │    │
-│  └─────────────────────────────────────────────────────────────────────────┘    │
-│                                                                                  │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│  RECOVERY POINTS IN WORKFLOW                                                     │
-│  ───────────────────────────────                                                 │
-│                                                                                  │
-│  ┌────────────┐    ┌────────────┐    ┌────────────┐    ┌────────────┐          │
-│  │ BRAINSTORM │───►│   PLAN     │───►│    PRD     │───►│  /ao-run   │          │
-│  │    .md     │    │    .md     │    │   .json    │    │   loop     │          │
-│  └────────────┘    └────────────┘    └────────────┘    └────────────┘          │
-│        │                 │                 │                 │                   │
-│        ▼                 ▼                 ▼                 ▼                   │
-│   resume from        resume from       resume from      resume from            │
-│   Phase 1            Phase 2           Phase 3          specific story         │
-│   (brainstorm)       (plan)            (prd)            (checkpoint)            │
-│                                                                                  │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│  COMPOUND FEEDBACK IN RECOVERY                                                   │
-│  ─────────────────────────────                                                   │
-│                                                                                  │
-│  Validation swarm uses past learnings to detect drift:                          │
-│  ┌─────────────────────────────────────────────────────────────────────────┐    │
-│  │                                                                          │    │
-│  │   docs/solutions/ ────► pattern-recognition-specialist                 │    │
-│  │        │                        │                                        │    │
-│  │        │                        ▼                                        │    │
-│  │   known gotchas ──────► "This pattern caused issues before"            │    │
-│  │        │                        │                                        │    │
-│  │        │                        ▼                                        │    │
-│  │   drift patterns ─────► "Similar drift happened in feature X"          │    │
-│  │                                                                          │    │
-│  └─────────────────────────────────────────────────────────────────────────┘    │
-│                                                                                  │
-│  ═══════════════════════════════════════════════════════════════════════════    │
-│  RECOVERY IS FASTER with compound engineering (learnings help validate)         │
-│  ═══════════════════════════════════════════════════════════════════════════    │
-│                                                                                  │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
 
 ## Execution
 
@@ -186,353 +42,282 @@ git rebase -i develop
 **Goal:** Figure out where we are in the workflow.
 
 ```bash
-# Check artifacts existence
+# Check artifacts
 BRAINSTORM=$(ls -t docs/brainstorms/*.md 2>/dev/null | head -1)
 PLAN=$(ls -t docs/plans/*-plan.md 2>/dev/null | head -1)
 PRD=".agents/tasks/prd.json"
 
-echo "Artifacts found:"
-echo "  Brainstorm: $([ -f "$BRAINSTORM" ] && echo "$BRAINSTORM" || echo 'NONE')"
-echo "  Plan: $([ -f "$PLAN" ] && echo "$PLAN" || echo 'NONE')"
-echo "  PRD: $([ -f "$PRD" ] && echo "$PRD" || echo 'NONE')"
+echo "Artifacts:"
+[ -f "$BRAINSTORM" ] && echo "  ✓ Brainstorm: $BRAINSTORM" || echo "  ✗ Brainstorm: NONE"
+[ -f "$PLAN" ] && echo "  ✓ Plan: $PLAN" || echo "  ✗ Plan: NONE"
+[ -f "$PRD" ] && echo "  ✓ PRD: $PRD" || echo "  ✗ PRD: NONE"
 
 # Check git state
-CURRENT_BRANCH=$(git branch --show-current)
-UNCOMMITTED=$(git status --porcelain)
-
-echo "Git state:"
-echo "  Branch: $CURRENT_BRANCH"
-echo "  Uncommitted: $([ -z "$UNCOMMITTED" ] && echo 'CLEAN' || echo 'DIRTY')"
+BRANCH=$(git branch --show-current)
+DIRTY=$(git status --porcelain)
+echo "Git: branch=$BRANCH, working_dir=$([ -z "$DIRTY" ] && echo 'clean' || echo 'dirty')"
 
 # Check PRD story status
 if [ -f "$PRD" ]; then
-  TOTAL=$(jq '.stories | length' "$PRD")
-  DONE=$(jq '[.stories[] | select(.status == "done")] | length' "$PRD")
-  PENDING=$(jq '[.stories[] | select(.status == "pending" or .status == null)] | length' "$PRD")
-  IN_PROGRESS=$(jq '[.stories[] | select(.status == "in_progress")] | length' "$PRD")
-  
-  echo "PRD status: $DONE/$TOTAL done, $IN_PROGRESS in progress, $PENDING pending"
+  TOTAL=$(jq '.stories | length' "$PRD" 2>/dev/null || echo 0)
+  DONE=$(jq '[.stories[] | select(.status == "done")] | length' "$PRD" 2>/dev/null || echo 0)
+  echo "Stories: $DONE/$TOTAL done"
 fi
 ```
 
 **Phase detection logic:**
 
-| Condition | Phase | Action |
-|-----------|-------|--------|
-| No brainstorm | `start` | Run `/ao-start` |
+| Condition | Detected Phase | Action |
+|-----------|----------------|--------|
+| No brainstorm file | `start` | Run `/ao-start` |
 | Brainstorm exists, no plan | `plan` | Run planning phase |
-| Plan exists, no PRD | `prd` | Run `ralph prd` |
+| Plan exists, no PRD | `prd` | Run PRD generation |
 | PRD exists, stories pending | `run` | Resume `/ao-run` |
 | All stories done | `complete` | Run compound or finish |
 
-### Phase 1: Validation Swarm
+**If `--from <phase>` is specified:** Override detection and start from that phase.
 
-**Create validation team:**
-```javascript
-Teammate({ 
-  operation: "spawnTeam", 
-  team_name: "state-validation",
-  description: "Validating workflow state consistency"
-})
-```
+### Phase 1: Validation
 
-**Spawn validators (parallel):**
+**Goal:** Verify state consistency between artifacts and reality.
+
+Run validation checks (can be parallel):
+
+**1.1 Code vs PRD consistency:**
 
 ```javascript
 Task({
-  team_name: "state-validation",
-  name: "code-vs-prd",
-  subagent_type: "compound-engineering:research:repo-research-analyst",
+  subagent_type: "Explore",
+  description: "Validate code vs PRD",
   prompt: `
     Validate code consistency with PRD.
     
-    PRD location: .agents/tasks/prd.json
+    PRD: .agents/tasks/prd.json
     
     Tasks:
-    1. Read PRD stories marked as "done"
-    2. For each done story, check:
-       - Do the files mentioned actually exist?
-       - Does the code implement what acceptance criteria say?
-       - Any obvious gaps or regressions?
+    1. Read stories marked as "done"
+    2. For each done story, verify:
+       - Files mentioned exist
+       - Code implements acceptance criteria
+       - No obvious gaps
     
-    3. Check for untracked changes:
-       - Code that exists but isn't in any story
-       - Stories marked done but code is incomplete
+    3. Check for untracked code:
+       - Files changed but not in any story
+       - Stories marked done but incomplete
     
-    Output format:
+    Output:
     CONSISTENCY: consistent | drifted | unknown
     
-    DONE_STORIES_VALIDATED:
+    DONE_STORIES_CHECK:
     - <story-id>: VALID | INVALID - <reason>
     
-    DRIFT_FINDINGS:
-    - <finding 1>
-    - <finding 2>
+    DRIFT_ISSUES:
+    - <issue description>
     
-    UNTRACKED_CODE:
-    - <file>: <what it does>
-    
-    Send findings to team-lead.
-  `,
-  run_in_background: true
-})
-
-Task({
-  team_name: "state-validation",
-  name: "git-sync",
-  subagent_type: "compound-engineering:research:git-history-analyzer",
-  prompt: `
-    Analyze recent git history for state validation.
-    
-    Tasks:
-    1. Check commits since PRD was created
-    2. Identify:
-       - Commits with story references (good)
-       - Commits without story references (potential drift)
-       - Any manual changes not from agents
-    
-    3. Check branch state:
-       - Is current branch ahead/behind develop?
-       - Any merge conflicts?
-    
-    Output format:
-    GIT_STATE: clean | uncommitted | diverged
-    
-    COMMITS_WITH_STORIES: [list]
-    COMMITS_WITHOUT_STORIES: [list]
-    
-    BRANCH_STATUS: <ahead/behind count>
-    
-    Send findings to team-lead.
-  `,
-  run_in_background: true
-})
-
-Task({
-  team_name: "state-validation",
-  name: "tag-validator",
-  subagent_type: "compound-engineering:review:pattern-recognition-specialist",
-  prompt: `
-    Validate story tags match reality.
-    
-    PRD location: .agents/tasks/prd.json
-    
-    For each story, check if status is accurate:
-    - "done" → verify actually complete
-    - "blocked" → verify blocker still exists
-    - "in_progress" → verify work is actually happening
-    - "@human" tag → verify needs human attention
-    
-    Also check:
-    - Dependencies: Are all listed dependencies real?
-    - Files_likely: Do predicted files match reality?
-    
-    Output format:
-    TAG_ACCURACY: accurate | drifted
-    
-    TAG_ISSUES:
-    - <story-id>: <tag> should be <correct-tag> - <reason>
-    
-    DEPENDENCY_ISSUES:
-    - <story-id>: dependency <dep-id> doesn't exist
-    
-    Send findings to team-lead.
-  `,
-  run_in_background: true
+    UNTRACKED_FILES:
+    - <file>: <note>
+  `
 })
 ```
 
-**Wait for results:**
-```bash
-cat ~/.claude/teams/state-validation/inboxes/team-lead.json
-```
-
-### Phase 2: Determine Validation Result
-
-```
-VALIDATION_RESULT:
-- CONSISTENT    → No drift, safe to continue
-- DRIFTED       → Minor issues, can be auto-fixed
-- SEVERE_DRIFT  → Major issues, needs decision
-```
-
-### Phase 3: Create Checkpoint (if changes needed)
-
-**If validation found issues AND NOT `--validate-only`:**
+**1.2 Git state check:**
 
 ```bash
-# Load config
-SEVERE_ACTION=$(jq -r '.continue.severe_drift_action // "ask"' .agents/config.json)
-CHECKPOINT_PREFIX=$(jq -r '.continue.checkpoint_prefix // "[ao-checkpoint]"' .agents/config.json)
+# Check recent commits
+echo "Recent commits:"
+git log --oneline -10
 
-# Create checkpoint
+# Check for commits with story references vs without
+WITH_REFS=$(git log --oneline --grep='Story:' | wc -l)
+WITHOUT_REFS=$(git log --oneline | head -20 | wc -l)
+echo "Commits with story refs: $WITH_REFS"
+
+# Branch status vs develop
+AHEAD=$(git rev-list --count origin/develop..HEAD 2>/dev/null || echo "?")
+BEHIND=$(git rev-list --count HEAD..origin/develop 2>/dev/null || echo "?")
+echo "Branch vs develop: ahead=$AHEAD, behind=$BEHIND"
+```
+
+**1.3 Tag/status accuracy:**
+
+Check that story statuses in PRD match reality:
+- `done` stories should have corresponding commits
+- `in_progress` stories should have recent activity
+- `blocked` stories should have blocker documented
+
+### Phase 2: Checkpoint (if changes needed)
+
+**Create checkpoint if:**
+- Validation found drift issues, OR
+- Resuming with `--from` override, OR
+- Not using `--validate-only`
+
+```bash
+CHECKPOINT_MSG="[ao-checkpoint] Pre-continue snapshot
+
+State:
+- Phase: $DETECTED_PHASE
+- Stories: $DONE/$TOTAL done
+- Drift: $DRIFT_STATUS
+- Action: $PLANNED_ACTION
+
+Restore: git reset --hard \$(git rev-parse HEAD)"
+
 git add -A
-git commit -m "${CHECKPOINT_PREFIX} Pre-continue validation snapshot
+git commit -m "$CHECKPOINT_MSG"
 
-State at checkpoint:
-- Phase: $(detect_phase)
-- Stories done: ${DONE}/${TOTAL}
-- Validation: ${VALIDATION_RESULT}
-- Drift findings: ${DRIFT_COUNT} issues
-- Planned action: ${PLANNED_ACTION}
-
-Drift details:
-$(for issue in "${DRIFT_ISSUES[@]}"; do echo "- $issue"; done)
-
-Restore: git reset --hard $(git rev-parse HEAD)
-Find checkpoints: git log --grep='${CHECKPOINT_PREFIX}'"
-
-echo "✓ Checkpoint created: $(git rev-parse --short HEAD)"
+CHECKPOINT_SHA=$(git rev-parse --short HEAD)
+echo "✓ Checkpoint: $CHECKPOINT_SHA"
 ```
 
-### Phase 4: Handle Result
+### Phase 3: Report
 
-#### Case A: CONSISTENT
+**Consolidate and present findings:**
 
 ```
 ═══════════════════════════════════════════════════════════════
-AO Continue — State Validation
+AO Continue — State Report
+═══════════════════════════════════════════════════════════════
 
-STATE: CONSISTENT ✓
+DETECTED STATE
+Phase: run (4/7 stories complete)
+Branch: feature/auth
+Git: clean
 
-All stories match code reality.
+Artifacts:
+├── Brainstorm: docs/brainstorms/2025-02-14-auth.md ✓
+├── Plan: docs/plans/2025-02-14-feat-auth-plan.md ✓
+└── PRD: .agents/tasks/prd.json ✓
 
-Stories: 4/7 done
-Resume from: auth-005 (next pending story)
+VALIDATION
+├── Code vs PRD: CONSISTENT ✓
+├── Git state: CLEAN ✓
+└── Tags: ACCURATE ✓
 
-Proceeding with /ao-run...
+DRIFT ISSUES: 0
+Checkpoint: abc1234
+
+Ready to resume from: auth-005
 ═══════════════════════════════════════════════════════════════
 ```
 
-#### Case B: DRIFTED
+**If drift found:**
 
 ```
-═══════════════════════════════════════════════════════════════
-AO Continue — State Validation
+VALIDATION
+├── Code vs PRD: DRIFTED ⚠️
+├── Git state: CLEAN ✓
+└── Tags: DRIFTED ⚠️
 
-STATE: DRIFTED ⚠️
+DRIFT ISSUES: 2
+├── auth-003: marked done but missing error handling
+│   → Recommend: reset to pending
+└── auth-005: in_progress but no recent changes
+    → Recommend: reset to pending
 
-Found 2 drift issues:
-1. auth-003: marked done but missing error handling
-2. auth-005: in_progress but no recent changes
-
-Checkpoint: abc1234 (restore if needed)
-
-Auto-fixing drift:
-✓ auth-003 → status: pending
-✓ auth-005 → status: pending
-
-Post-fix checkpoint: def5678
-
-Resuming from auth-003 (first drifted story)...
-═══════════════════════════════════════════════════════════════
+Checkpoint: abc1234
 ```
 
-#### Case C: SEVERE_DRIFT
+### Phase 4: User Decision
+
+**If drift found, use AskUserQuestion:**
 
 ```
-═══════════════════════════════════════════════════════════════
-AO Continue — State Validation
-
-STATE: SEVERE_DRIFT 🚨
-
-Critical issues found:
-- 4 stories marked done but code missing
-- PRD is 3 weeks old
-- Branch diverged significantly
-
-Checkpoint: abc1234 (restore if needed)
-═══════════════════════════════════════════════════════════════
-```
-
-**Check config for action:**
-
-```bash
-case $SEVERE_ACTION in
-  "ask")
-    # Use AskUserQuestion tool
-    ;;
-  "restart")
-    echo "Config set to auto-restart. Starting fresh..."
-    # Clean and run /ao-start
-    ;;
-  "force-continue")
-    echo "Config set to force-continue. Proceeding anyway..."
-    ;;
-esac
-```
-
-**If asking user:**
-
-```
-Question: "Severe drift detected. How would you like to proceed?"
+Question: "Drift detected. How to proceed?"
 
 Options:
-1. Start fresh (Recommended)
-   - Checkpoint already created
-   - Run /ao-start with same request
-   - Preserves existing code as reference
+1. Fix drift and continue (Recommended)
+   - Reset drifted stories to pending
+   - Resume from first drifted story
    
-2. Force continue
-   - Accept current state as-is
-   - May lead to inconsistencies
+2. Continue as-is
+   - Accept current state
+   - Resume from next pending story
    
-3. Manual resolution
-   - Exit and let human investigate
-   - Return with /ao-continue when ready
+3. Restart from beginning
+   - Start fresh with /ao-start
+   - Preserves existing code
 ```
 
-### Phase 5: Apply Fixes (if drifted)
+**If no drift:**
+
+```
+Question: "State validated. Ready to resume?"
+
+Options:
+1. Resume from auth-005 (Recommended)
+2. Force restart from different phase
+3. Cancel
+```
+
+### Phase 5: Apply Fixes (if chosen)
 
 ```bash
-# Update PRD based on validation findings
-for issue in "${DRIFT_ISSUES[@]}"; do
-  STORY_ID=$(echo "$issue" | jq -r '.story_id')
-  CORRECT_STATUS=$(echo "$issue" | jq -r '.correct_status')
-  DRIFT_NOTE=$(echo "$issue" | jq -r '.note')
-  
-  jq --arg id "$STORY_ID" \
-     --arg status "$CORRECT_STATUS" \
-     --arg note "$DRIFT_NOTE" \
+# Update PRD for drifted stories
+for story in "${DRIFTED_STORIES[@]}"; do
+  jq --arg id "$story" \
+     --arg status "pending" \
+     --arg note "Reset due to drift" \
      '(.stories[] | select(.id == $id)) |= . + {status: $status, drift_note: $note}' \
-     .agents/tasks/prd.json > .agents/tasks/prd.json.tmp
+     .agents/tasks/prd.json > .agents/tasks/prd.json.tmp && \
   mv .agents/tasks/prd.json.tmp .agents/tasks/prd.json
   
-  echo "✓ $STORY_ID → $CORRECT_STATUS"
+  echo "✓ Reset: $story → pending"
 done
 
 # Post-fix checkpoint
 git add .agents/tasks/prd.json
 git commit -m "[ao-checkpoint] Drift fixes applied
 
-Fixed stories:
-$(for issue in "${DRIFT_ISSUES[@]}"; do echo "- ${issue.story_id}: ${issue.action}"; done)
-
-Restore: git reset --hard $(git rev-parse HEAD)"
+Reset stories:
+- auth-003 → pending (missing error handling)
+- auth-005 → pending (stale in_progress)"
 ```
 
 ### Phase 6: Resume
 
+**Determine starting point:**
+
 ```bash
-# Determine starting story
-if [ "$VALIDATION_RESULT" = "DRIFTED" ]; then
-  START_STORY=$(echo "${DRIFT_ISSUES[0]}" | jq -r '.story_id')
+if [ -n "$FROM_PHASE" ]; then
+  # User specified --from
+  case "$FROM_PHASE" in
+    brainstorm)  START="Phase 1: Brainstorm" ;;
+    plan)        START="Phase 2: Plan" ;;
+    prd)         START="Phase 3: PRD" ;;
+    run)         START="Next story" ;;
+  esac
+elif [ "$VALIDATION" = "DRIFTED" ] && [ "$FIX_DRIFT" = true ]; then
+  # Start from first drifted story
+  START_STORY="${DRIFTED_STORIES[0]}"
 else
-  START_STORY=$(jq -r '.stories[] | select(.status == "pending") | select(.depends_on | all(. as $dep | .. | select(.id == $dep) | .status == "done")) | .id' .agents/tasks/prd.json | head -1)
+  # Start from first pending story with satisfied deps
+  START_STORY=$(jq -r '.stories[] | select(.status == "pending") | select(.depends_on | length == 0 or all(. as $dep | .. | select(.id == $dep) | .status == "done")) | .id' .agents/tasks/prd.json | head -1)
 fi
+```
 
-echo "Resuming from: $START_STORY"
+**Hand off to appropriate command:**
 
-# Cleanup validation team
-Teammate({ operation: "requestShutdown", target_agent_id: "code-vs-prd" })
-Teammate({ operation: "requestShutdown", target_agent_id: "git-sync" })
-Teammate({ operation: "requestShutdown", target_agent_id: "tag-validator" })
-Teammate({ operation: "cleanup" })
+| Starting Point | Action |
+|----------------|--------|
+| Phase 1: Brainstorm | Run `/ao-start` (fresh) |
+| Phase 2: Plan | Run planning from `/ao-start` |
+| Phase 3: PRD | Generate PRD from existing plan |
+| Next story | Run `/ao-run` from that story |
 
-# Hand off to /ao-run
+### Phase 7: Cleanup
+
+```bash
+echo "Resuming from: ${START_STORY:-$START}"
+echo "Checkpoint: $CHECKPOINT_SHA"
+echo ""
+echo "To restore: git reset --hard $CHECKPOINT_SHA"
+echo "To squash later: git rebase -i develop"
 ```
 
 ## --validate-only Output
+
+When using `--validate-only`, output detailed report and exit:
 
 ```
 ═══════════════════════════════════════════════════════════════
@@ -546,27 +331,20 @@ STATE: DRIFTED ⚠️
 Story Progress: 4/7
 ├── auth-001: done ✓
 ├── auth-002: done ✓
-├── auth-003: done ⚠️ (DRIFT: missing error handling)
+├── auth-003: done ⚠️ DRIFT: missing error handling
 ├── auth-004: done ✓
-├── auth-005: in_progress ⚠️ (DRIFT: no recent changes)
+├── auth-005: in_progress ⚠️ DRIFT: no recent changes
 ├── auth-006: pending
 └── auth-007: blocked (@human)
 
 Drift Issues: 2
-├── auth-003: Should be pending
-│   Reason: Acceptance "Handle invalid OAuth" not met
-│
-└── auth-005: Should be pending
-    Reason: No commits in 2 days, no code changes
-
-Untracked Code: 1
-└── lib/oauth_helper.rb (not in any story)
+├── auth-003: Should be pending (acceptance not met)
+└── auth-005: Should be pending (stale)
 
 Recommendations:
-1. Run /ao-continue (will create checkpoint and fix drift)
-2. Or manually update PRD before continuing
+1. Run /ao-continue to fix drift and resume
+2. Or manually update PRD
 
-To resume: /ao-continue
 ═══════════════════════════════════════════════════════════════
 ```
 
@@ -575,7 +353,7 @@ To resume: /ao-continue
 ### No Artifacts Found
 
 ```
-STATE: No workflow in progress
+STATE: no-workflow
 
 No artifacts found. This project hasn't started a workflow yet.
 
@@ -585,22 +363,48 @@ Run /ao-start to begin.
 ### All Stories Done
 
 ```
-STATE: Workflow complete
+STATE: complete
 
 All 7 stories marked as done.
 
 Options:
-1. Run compound phase (document learnings)
+1. Run compound phase to document learnings
 2. Create PR
 3. Start new feature with /ao-start
 ```
+
+### Severe Drift
+
+When drift is severe (e.g., PRD weeks old, major inconsistencies):
+
+Check config for `severe_drift_action`:
+- `ask` → Use AskUserQuestion
+- `restart` → Auto-start fresh
+- `force-continue` → Proceed despite issues
 
 ## Status Protocol
 
 ```
 VALIDATION: consistent   → Resume normally
-VALIDATION: drifted      → Fix drift or accept and continue
+VALIDATION: drifted      → Fix or accept and continue
 VALIDATION: severe_drift → Ask/restart/force based on config
+```
+
+## Checkpoint Commands Reference
+
+```bash
+# Find all checkpoints
+git log --oneline --grep='\[ao-checkpoint\]'
+
+# Restore to last checkpoint
+git reset --hard $(git log --grep='\[ao-checkpoint\]' -n 1 --format=%H)
+
+# Restore to specific checkpoint
+git reset --hard <sha>
+
+# Squash checkpoints after feature complete
+git rebase -i develop
+# Mark checkpoint commits as 'fixup' or 'squash'
 ```
 
 ## Output Summary
@@ -610,18 +414,18 @@ VALIDATION: severe_drift → Ask/restart/force based on config
 AO Continue — Resuming Workflow
 ═══════════════════════════════════════════════════════════════
 
-State: Validated (minor drift fixed)
-Checkpoint: def5678
+State: Validated ✓
+Checkpoint: abc1234
 
 Resuming:
-├── From: auth-003
+├── From: auth-005
 ├── Remaining: 3 stories
 └── Estimated: 1.5 hours
 
 Checkpoint commands:
-├── Find all: git log --grep='[ao-checkpoint]'
-├── Restore:  git reset --hard def5678
-└── Squash:   git rebase -i def5678~1
+├── Find: git log --grep='[ao-checkpoint]'
+├── Restore: git reset --hard abc1234
+└── Squash: git rebase -i abc1234~1
 
 Handing off to /ao-run...
 ═══════════════════════════════════════════════════════════════

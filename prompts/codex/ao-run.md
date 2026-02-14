@@ -14,123 +14,24 @@ Execute PRD stories through orchestrated agent pipeline with fresh contexts.
 
 ## Architecture Overview
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                        COMPOUND ENGINEERING WORKFLOW                             │
-│                                                                                  │
-│        "Each unit of work should make subsequent units easier"                  │
-│                                                                                  │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│  /ao-start ──► /ao-run ──► COMPOUND ──► (next iteration is easier)             │
-│      │              │           │                                               │
-│      ▼              ▼           ▼                                               │
-│   PLAN          EXECUTE      LEARN                                              │
-│   (WHAT/HOW)    (BUILD)      (COMPOUND)                                         │
-│                                                                                  │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│  PER-STORY LOOP (fresh contexts)                                                │
-│  ────────────────────────────────                                                │
-│                                                                                  │
-│  ┌─────────────┐                                                                │
-│  │   SETUP     │  worktree, dependencies                                        │
-│  │  (fresh)    │  STATUS: done → implement                                      │
-│  └──────┬──────┘                                                                │
-│         ↓                                                                        │
-│  ┌─────────────┐                                                                │
-│  │ IMPLEMENT   │  CoderAgent (FRESH context per story!)                        │
-│  │  (fresh)    │  STATUS: done → verify | retry → implement                    │
-│  └──────┬──────┘                                                                │
-│         ↓                                                                        │
-│  ┌─────────────┐                                                                │
-│  │   VERIFY    │  VerifierAgent (FRESH, skeptical QA) ◄── Antfarm pattern      │
-│  │  (fresh)    │  STATUS: done → test | retry → implement                      │
-│  └──────┬──────┘                                                                │
-│         ↓                                                                        │
-│  ┌─────────────┐                                                                │
-│  │    TEST     │  TestEngineer (fresh context)                                 │
-│  │  (fresh)    │  STATUS: done → review | retry → implement                    │
-│  └──────┬──────┘                                                                │
-│         ↓                                                                        │
-│  ┌─────────────┐                                                                │
-│  │   REVIEW    │  Review swarm (parallel: security, performance, simplicity)   │
-│  │  (swarm)    │  STATUS: approved → commit | changes_requested → implement    │
-│  └──────┬──────┘                                                                │
-│         ↓                                                                        │
-│  ┌─────────────┐                                                                │
-│  │   COMMIT    │  Git commit with story reference                              │
-│  │             │  STATUS: done → next story or COMPOUND                        │
-│  └──────┬──────┘                                                                │
-│         │                                                                        │
-│         ├──── more stories? ────► return to SETUP                               │
-│         │                                                                        │
-│         └──── all stories done? ──► COMPOUND PHASE                              │
-│                                                                                  │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│  COMPOUND PHASE (after all stories complete)                                     │
-│  ────────────────────────────────────────                                        │
-│                                                                                  │
-│  ┌─────────────────────────────────────────────────────────────────────────┐    │
-│  │  COMPOUND — Document Learnings                                           │    │
-│  │                                                                          │    │
-│  │  Tasks:                                                                  │    │
-│  │  - Review entire feature implementation                                  │    │
-│  │  - Extract reusable patterns                                             │    │
-│  │  - Document gotchas and solutions                                        │    │
-│  │  - Note metrics for future reference                                     │    │
-│  │                                                                          │    │
-│  │  Output: docs/solutions/<category>/<topic>-learnings.md                  │    │
-│  │                                                                          │    │
-│  └─────────────────────────────────────────────────────────────────────────┘    │
-│                              │                                                   │
-│                              ▼                                                   │
-│                       docs/solutions/                                            │
-│                              │                                                   │
-│                              │                                                   │
-│                              └──────────────────────────────────────────┐       │
-│                                                                         │       │
-│                              FEEDS INTO NEXT ITERATION                  │       │
-│                                                                         ▼       │
-│  ┌─────────────────────────────────────────────────────────────────────────┐    │
-│  │                                                                          │    │
-│  │   NEXT /ao-start                                                         │    │
-│  │        │                                                                 │    │
-│  │        ▼                                                                 │    │
-│  │   learnings-researcher finds past solutions                             │    │
-│  │        │                                                                 │    │
-│  │        ▼                                                                 │    │
-│  │   Plan includes proven patterns, avoids past mistakes                    │    │
-│  │                                                                          │    │
-│  │   ══════════════════════════════════════════════════════════             │    │
-│  │   NEXT ITERATION IS EASIER (compound engineering achieved!)              │    │
-│  │   ══════════════════════════════════════════════════════════             │    │
-│  │                                                                          │    │
-│  └─────────────────────────────────────────────────────────────────────────┘    │
-│                                                                                  │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                                                                                  │
-│  LEARNINGS FEEDBACK LOOP:                                                        │
-│  ┌────────────┐    ┌────────────┐    ┌────────────┐    ┌────────────┐          │
-│  │  /ao-run   │───►│  COMPOUND  │───►│ docs/      │───►│ next       │          │
-│  │  executes  │    │  extracts  │    │ solutions/ │    │ /ao-start  │          │
-│  │  stories   │    │  patterns  │    │ learnings  │    │ uses them  │          │
-│  └────────────┘    └────────────┘    └────────────┘    └────────────┘          │
-│                                                                                  │
-└─────────────────────────────────────────────────────────────────────────────────┘
-```
+See [README.md](../../README.md) for the full compound engineering cycle diagram.
+
+**Per-story pipeline:** SETUP → IMPLEMENT → VERIFY → TEST → REVIEW → COMMIT
+
+**Compound phase:** After all stories → document learnings to `docs/solutions/`
 
 ## Pre-flight Check
 
 1. **Validate PRD exists:**
    ```bash
-   test -f .agents/tasks/prd.json
+   test -f .agents/tasks/prd.json || { echo "Missing PRD. Run /ao-start first."; exit 1; }
    ```
-   If missing: Stop and suggest `/ao-start`
 
-2. **Ensure worktree:**
+2. **Ensure worktree (recommended):**
    ```bash
-   git worktree list | grep -q ".codex/worktrees"
+   git worktree list | grep -q ".codex/worktrees" || \
+     echo "Consider creating a worktree: git worktree add .codex/worktrees/<id> -b feature/<id>-<slug> develop"
    ```
-   If missing: Create worktree for feature branch
 
 ## Execution Loop
 
@@ -138,42 +39,40 @@ Execute PRD stories through orchestrated agent pipeline with fresh contexts.
 
 ```bash
 # Get next pending story with satisfied dependencies
-cat .agents/tasks/prd.json | jq '.stories[] | select(.status == "pending") | select(.depends_on | all(. as $dep | .[].stories[] | select(.id == $dep) | .status == "done"))'
+jq -r '.stories[] | select(.status == "pending") | select(.depends_on | length == 0 or all(. as $dep | .[].stories[]? | select(.id == $dep) | .status == "done")) | .id' .agents/tasks/prd.json | head -1
 ```
 
-If `--parallel`:
-```bash
-# Get ALL pending stories with satisfied dependencies
-cat .agents/tasks/prd.json | jq '.stories[] | select(.status == "pending") | select(.depends_on | length == 0 or all(...))'
-```
+**If `--parallel`:** Get ALL pending stories with satisfied dependencies.
 
 ### Step 1: SETUP (per story)
 
-**Agent:** setup (fresh context)
+**Goal:** Prepare clean workspace for this story.
 
 **Tasks:**
-- Ensure clean workspace
-- Install dependencies if needed
-- Create feature branch if not exists
+- Verify clean git state (or warn)
+- Check dependencies are installed
+- Note the story being worked on
 
 **Output:**
 ```
-STATUS: done
-WORKSPACE: ready
+STORY: <story-id>
+STATUS: ready
 ```
 
 ### Step 2: IMPLEMENT (per story)
 
-**Agent:** CoderAgent (FRESH context — no memory of previous stories)
+**Goal:** Write code to satisfy acceptance criteria.
+
+**Agent:** CoderAgent or general-purpose (fresh context per story)
 
 **Input:**
-- Story: {{story}}
-- Plan: {{plan}} (relevant section only)
-- Patterns: From repo research
+- Story from PRD
+- Relevant plan section
+- Project patterns from CLAUDE.md/AGENTS.md
 
-**Prompt:**
+**Prompt template:**
 ```
-Implement story: <story_id> - <title>
+Implement story: <story-id> - <title>
 
 Acceptance Criteria:
 - [ ] <criterion 1>
@@ -181,16 +80,17 @@ Acceptance Criteria:
 - [ ] <criterion 3>
 
 Plan Context:
-<relevant plan section>
+<relevant plan section excerpt>
 
-Follow project patterns from:
-- CLAUDE.md
-- Existing similar code
+Likely files: <files_likely from PRD>
 
-Run typecheck and lint before marking done.
+Guidelines:
+- Follow project conventions (check CLAUDE.md/AGENTS.md)
+- Run typecheck/lint before marking done
+- Keep changes minimal and focused
 
 Output format:
-FILES_CHANGED: [list of modified files]
+FILES_CHANGED: [list of modified/created files]
 STATUS: done | retry
 ```
 
@@ -206,42 +106,41 @@ RETRY_REASON: <specific issue>
 FEEDBACK: <what to fix>
 ```
 
-### Step 3: VERIFY (per story) — CRITICAL STEP
+### Step 3: VERIFY (per story) — CRITICAL
 
-**Agent:** verifier (FRESH context — different session from developer!)
+**Goal:** Independent verification that acceptance criteria are met.
+
+**Agent:** Verifier (FRESH context — different from developer!)
 
 **Persona:**
-```markdown
-# Verifier Agent
-
+```
 You are a senior QA engineer with a skeptical mindset.
 Your ONLY job is to say "NO" until the work is truly complete.
 
-## Guidelines
+Guidelines:
 - Check EVERY acceptance criterion from the story
-- Run the code yourself if possible
 - Verify edge cases are handled
 - Don't accept "works on my machine" without evidence
 - Be MORE critical than the developer would be
-- You are the quality gate — do not let sloppy work through
+- You are the quality gate
 
-## Anti-patterns
+Anti-patterns:
 - Don't just read the code — VERIFY it works
 - Don't trust the developer's word — VERIFY claims
 - Don't skip edge cases — they're where bugs hide
 ```
 
 **Input:**
-- Story: {{story}}
-- Implementation: {{FILES_CHANGED}}
-- Acceptance criteria from story
+- Story: `{{story}}`
+- Implementation: `{{FILES_CHANGED}}`
+- Acceptance criteria from PRD
 
-**Prompt:**
+**Prompt template:**
 ```
-VERIFY implementation for story: <story_id>
+VERIFY implementation for story: <story-id>
 
-Implementation files:
-<list of files with content>
+Files changed:
+<list files with key code excerpts>
 
 Acceptance Criteria to verify:
 - [ ] <criterion 1>
@@ -251,7 +150,7 @@ Acceptance Criteria to verify:
 For each criterion:
 1. Check if the code ACTUALLY implements it
 2. Look for edge cases
-3. Verify no regressions
+3. Verify no regressions introduced
 
 Output format:
 VERIFIED: true | false
@@ -289,26 +188,26 @@ STATUS: retry → back to IMPLEMENT
 
 ### Step 4: TEST (per story)
 
-**Agent:** TestEngineer (fresh context)
+**Goal:** Ensure tests exist and pass.
+
+**Agent:** TestEngineer or general-purpose (fresh context)
 
 **Tasks:**
 - Run existing test suite
-- Add regression tests for new feature
+- Add tests for new acceptance criteria
+- Add edge case tests
 - Ensure all tests pass
 
-**Prompt:**
+**Prompt template:**
 ```
-Test implementation for story: <story_id>
+Test implementation for story: <story-id>
 
-Files changed:
-<list>
-
-Acceptance criteria to test:
-<criteria>
+Files changed: <list>
+Acceptance criteria: <list>
 
 Tasks:
 1. Run existing test suite
-2. Add tests for acceptance criteria
+2. Add tests for each acceptance criterion
 3. Add edge case tests
 4. Ensure all tests pass
 
@@ -331,58 +230,64 @@ STATUS: done → proceed to review
 
 ### Step 5: REVIEW (per story or batch)
 
-**Agent:** reviewer swarm (parallel reviewers with fresh contexts)
+**Goal:** Multi-perspective code review.
 
-**Spawn review swarm:**
+**Approach:** Run review checks sequentially or spawn parallel agents.
+
+**Review checklist:**
+
 ```javascript
+// Security review
 Task({
-  subagent_type: "compound-engineering:review:security-sentinel",
+  subagent_type: "general-purpose",
   description: "Security review",
   prompt: `
-    Review implementation for security issues.
-    Files: {{FILES_CHANGED}}
+    Review files for security issues: <FILES_CHANGED>
     
-    Focus on:
+    Check for:
     - SQL injection
-    - XSS
-    - Auth bypass
-    - Data exposure
+    - XSS vulnerabilities
+    - Authentication/authorization bypass
+    - Sensitive data exposure
+    - Input validation gaps
     
-    Output: APPROVED | CHANGES_REQUESTED: [...]
+    Output: APPROVED | CHANGES_REQUESTED: [specific issues]
   `,
   run_in_background: true
 })
 
+// Performance review
 Task({
-  subagent_type: "compound-engineering:review:performance-oracle",
+  subagent_type: "general-purpose",
   description: "Performance review",
   prompt: `
-    Review implementation for performance issues.
-    Files: {{FILES_CHANGED}}
+    Review files for performance issues: <FILES_CHANGED>
     
-    Focus on:
+    Check for:
     - N+1 queries
-    - Missing indexes
+    - Missing database indexes
     - Memory leaks
+    - Inefficient algorithms
     
-    Output: APPROVED | CHANGES_REQUESTED: [...]
+    Output: APPROVED | CHANGES_REQUESTED: [specific issues]
   `,
   run_in_background: true
 })
 
+// Code quality review
 Task({
-  subagent_type: "compound-engineering:review:code-simplicity-reviewer",
-  description: "Simplicity review",
+  subagent_type: "general-purpose",
+  description: "Code quality review",
   prompt: `
-    Review implementation for unnecessary complexity.
-    Files: {{FILES_CHANGED}}
+    Review files for code quality: <FILES_CHANGED>
     
-    Focus on:
+    Check for:
     - YAGNI violations
     - Over-engineering
-    - Premature abstraction
+    - Unclear naming
+    - Missing error handling
     
-    Output: APPROVED | CHANGES_REQUESTED: [...]
+    Output: APPROVED | CHANGES_REQUESTED: [specific issues]
   `,
   run_in_background: true
 })
@@ -392,7 +297,7 @@ Task({
 ```
 SECURITY: APPROVED
 PERFORMANCE: APPROVED
-SIMPLICITY: CHANGES_REQUESTED - extract method in User#authenticate
+CODE_QUALITY: CHANGES_REQUESTED - extract method in User#authenticate
 
 OVERALL: CHANGES_REQUESTED
 STATUS: changes_requested → back to IMPLEMENT
@@ -404,28 +309,29 @@ STATUS: changes_requested → back to IMPLEMENT
 
 ```bash
 git add <FILES_CHANGED>
+
 git commit -m "feat(<module>): <story title>
 
-Story: <story_id>
+Story: <story-id>
 Acceptance:
 - <criterion 1>
 - <criterion 2>
-- <criterion 3>
 
-Verified by: verifier agent
-Tested by: test agent
-Reviewed by: security, performance, simplicity agents"
+Verified: verifier agent
+Tested: test agent
+Reviewed: security, performance, quality agents"
 ```
 
-**Update story status:**
+**Update PRD:**
 ```bash
-# Mark story as done in PRD
-jq '.stories[] | select(.id == "<story_id>") | .status = "done"' .agents/tasks/prd.json
+jq '(.stories[] | select(.id == "<story-id>") | .status) = "done"' \
+  .agents/tasks/prd.json > .agents/tasks/prd.json.tmp && \
+  mv .agents/tasks/prd.json.tmp .agents/tasks/prd.json
 ```
 
 ### Step 7: NEXT STORY or COMPOUND
 
-**If more stories:**
+**If more pending stories:**
 - Return to Step 0
 
 **If all stories done:**
@@ -433,25 +339,27 @@ jq '.stories[] | select(.id == "<story_id>") | .status = "done"' .agents/tasks/p
 
 ### Step 8: COMPOUND (after all stories)
 
-**Agent:** manager
+**Goal:** Extract learnings for future iterations.
 
 **Tasks:**
-- Review entire feature implementation
-- Document learnings
-- Identify patterns for reuse
-- Note gotchas for future
+1. Review entire feature implementation
+2. Extract reusable patterns
+3. Document gotchas and solutions
+4. Record metrics
 
 **Output:**
 ```bash
 mkdir -p docs/solutions/<category>
 ```
 
+File: `docs/solutions/<category>/<topic>-learnings.md`
+
+Structure:
 ```markdown
 ---
 title: <Feature> Implementation Learnings
 category: <category>
 tags: [tag1, tag2, tag3]
-module: <module>
 date: YYYY-MM-DD
 stories: [story-id-1, story-id-2]
 ---
@@ -466,69 +374,84 @@ Brief description of what was built.
 - Decision 2: Rationale
 
 ## Patterns That Worked
-- Pattern 1: Description
-- Pattern 2: Description
+### Pattern 1: <Name>
+Description of the pattern and when to use it.
+
+Example:
+```
+<code example>
+```
 
 ## Gotchas
-- Gotcha 1: How to avoid
-- Gotcha 2: How to avoid
+### Gotcha 1: <Issue>
+- **Problem:** What went wrong
+- **Solution:** How it was fixed
+- **Prevention:** How to avoid in future
 
 ## Metrics
 - Stories completed: X
-- Cycle time per story: avg Y min
+- Avg cycle time: Y min/story
 - First-pass success rate: Z%
 - Human interventions: N
 
 ## References
 - Brainstorm: docs/brainstorms/...
 - Plan: docs/plans/...
-- PR: #XXX
 ```
 
 ## Parallel Execution Mode
 
 When `--parallel` flag is set:
 
-1. Identify all stories with:
+1. **Identify parallelizable stories:**
    - Status: pending
-   - Dependencies: satisfied or empty
+   - Dependencies: all satisfied
 
-2. Spawn multiple IMPLEMENT agents simultaneously:
+2. **Spawn multiple implementers:**
    ```javascript
-   // Stories auth-001, auth-002, auth-003 have no dependencies
-   Task({ subagent_type: "CoderAgent", prompt: "Story auth-001...", run_in_background: true })
-   Task({ subagent_type: "CoderAgent", prompt: "Story auth-002...", run_in_background: true })
-   Task({ subagent_type: "CoderAgent", prompt: "Story auth-003...", run_in_background: true })
+   // Stories with no dependencies on each other
+   parallel_stories.forEach(story => {
+     Task({
+       subagent_type: "CoderAgent",
+       prompt: `Implement story ${story.id}...`,
+       run_in_background: true
+     })
+   })
    ```
 
-3. Each story proceeds through its own pipeline
-4. VERIFY, TEST, REVIEW run per story
-5. Stories with dependencies wait for dependencies to complete
+3. **Each story proceeds through its own pipeline**
+
+4. **Stories with dependencies wait for dependencies to complete**
 
 ## Metrics Tracking
 
+Log to `.agents/metrics/run-<workflow-id>.json`:
+
 ```json
 {
-  "workflow_id": "auth-feature-2026-02-14",
-  "started": "2026-02-14T10:00:00Z",
+  "workflow_id": "auth-feature-2025-02-14",
+  "started": "2025-02-14T10:00:00Z",
+  "completed": "2025-02-14T13:15:00Z",
   "stories": [
     {
       "id": "auth-001",
-      "started": "2026-02-14T10:05:00Z",
-      "implement_duration_min": 25,
-      "verify_passed_first_try": true,
-      "test_duration_min": 10,
-      "review_passed_first_try": true,
-      "completed": "2026-02-14T10:40:00Z",
+      "started": "2025-02-14T10:05:00Z",
+      "implement_min": 25,
+      "verify_min": 5,
+      "test_min": 10,
+      "review_min": 5,
+      "total_min": 45,
+      "verify_first_try": true,
+      "review_first_try": true,
       "human_interventions": 0
     }
   ],
   "totals": {
     "stories_completed": 7,
-    "total_cycle_time_min": 180,
-    "first_pass_success_rate": 0.85,
-    "human_touch_rate": 0.14,
-    "escalation_rate": 0.0
+    "total_time_min": 195,
+    "avg_cycle_time_min": 28,
+    "first_pass_success_rate": 0.71,
+    "human_touch_rate": 0.14
   }
 }
 ```
@@ -539,14 +462,16 @@ When `--parallel` flag is set:
 - **Verifier must be separate:** Never same session as developer
 - **No skipping steps:** implement → verify → test → review is mandatory
 - **Human approval** for escalations
-- **Iteration cap:** Stop after N iterations, escalate to human
+- **Iteration cap:** Stop after N retries on same story, escalate
 
 ## Escalation Triggers
 
 - Story fails VERIFY 3+ times
-- Story fails TEST 3+ times
+- Story fails TEST 3+ times  
 - REVIEW returns CHANGES_REQUESTED 3+ times
-- Human intervention requested via `@human` tag
+- Explicit `@human` tag in story
+
+**Escalated stories:** Mark with `status: "blocked"` and add `blocked_reason` field.
 
 ## Status Protocol
 
@@ -566,7 +491,7 @@ After all iterations:
 ═══════════════════════════════════════════════════════════════
 AO Run Complete
 
-Stories Processed: 7/7
+Stories: 7/7
 ├── Completed: 6
 ├── Blocked: 0
 └── Escalated: 1 (@human tag)
@@ -575,20 +500,15 @@ Metrics:
 ├── Total time: 3h 15m
 ├── Avg cycle time: 28m/story
 ├── First-pass success: 71%
-├── Human touch rate: 14%
-└── Escalation rate: 14%
+└── Human touch rate: 14%
 
 Artifacts:
 ├── PRD: .agents/tasks/prd.json
-├── Learnings: docs/solutions/auth/authentication-learnings.md
-└── Metrics: .agents/metrics/auth-feature-2026-02-14.json
-
-Escalated Stories:
-└── auth-005: Complex OAuth flow - needs human judgment
-    → Run /ao-human to review
+├── Learnings: docs/solutions/<category>/<topic>-learnings.md
+└── Metrics: .agents/metrics/run-<id>.json
 
 Next Steps:
-1. Review escalated story with /ao-human
+1. Review escalated stories with /ao-human
 2. Run /ao-continue after resolution
 3. Create PR: gh pr create --title "..."
 ═══════════════════════════════════════════════════════════════

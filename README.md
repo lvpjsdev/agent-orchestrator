@@ -2,17 +2,33 @@
 
 Operational orchestration utilities for agent workflow governance.
 
-## Inspiration & References
+## Compound Engineering Workflow
 
-This project's compound engineering workflow was significantly influenced by:
+This project implements a compound engineering workflow where each unit of work makes subsequent units easier.
 
-- **[Antfarm Patterns: Orchestrating Specialized Agent Teams](https://www.vincirufus.com/posts/antfarm-patterns-orchestrating-specialized-agent-teams/)** by Vinci Rufus — Key insights on fresh contexts per step, verifier agents, status protocols, and checkpoint systems.
-- **[The Ralph Loop: Autonomous AI Agent Pattern](https://www.vincirufus.com/posts/ralph-loop-compound-engineering-future-software-development/)** by Vinci Rufus — Iterative development loop with fresh context per iteration.
-- **[compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin)** by Every — Research agents, review swarms, and orchestration patterns.
+**Core cycle:** PLAN → WORK → LEARN → (repeat with learnings)
 
-## Source of truth
+See [WORKFLOW_DIAGRAMS.md](docs/WORKFLOW_DIAGRAMS.md) for visual reference.
 
-- `agent-skills-matrix.json` - required/optional/forbidden skills per stage.
+### Commands
+
+| Command | Phase | Purpose | Output |
+|---------|-------|---------|--------|
+| `/ao-start` | PLAN | Brainstorm → Plan → PRD decomposition | `docs/brainstorms/`, `docs/plans/`, `.agents/tasks/prd.json` |
+| `/ao-run` | WORK | Execute stories with verify step | Code, tests, commits |
+| `/ao-run` (end) | LEARN | Extract patterns, document gotchas | `docs/solutions/<category>/` |
+| `/ao-continue` | RECOVER | Resume with validation and checkpoints | Checkpoints, state fixes |
+| `/ao-human` | ESCALATE | List tasks tagged for human review | Tasks with `@human` tag |
+
+### Compound Feedback Loop
+
+```
+/ao-run ──► COMPOUND ──► docs/solutions/ ──► next /ao-start (uses learnings)
+```
+
+## Source of Truth
+
+- `agent-skills-matrix.json` - required/optional/forbidden skills per stage
 
 ## CLI
 
@@ -22,21 +38,21 @@ pnpm -C packages/agent-orchestrator skills:gate -- --matrix ./agent-skills-matri
 
 Optional flags:
 
-- `--log <path>`: enables detection of actually used/forbidden skills from run logs.
-- `--policies <csv>`: passes satisfied policy checks (needed for stages with `requiredPolicies`).
+- `--log <path>`: enables detection of actually used/forbidden skills from run logs
+- `--policies <csv>`: passes satisfied policy checks (needed for stages with `requiredPolicies`)
 
-## Manager stage dependency
+## Manager Stage Dependency
 
-- `brainstorming` skill is required before `/ao-start` PRD creation.
+- `brainstorming` skill is required before `/ao-start` PRD creation
 - Install command:
 
 ```bash
 npx skills add obra/superpowers@brainstorming -g -y
 ```
 
-## Codex prompts (slash commands)
+## Codex Prompts (Slash Commands)
 
-This repo ships shared Codex prompt files (slash commands) under:
+This repo ships shared Codex prompt files under:
 
 - `packages/agent-orchestrator/prompts/codex/*.md`
 
@@ -52,74 +68,91 @@ Overwrite existing files:
 pnpm -C packages/agent-orchestrator prompts:install -- --force
 ```
 
-Main workflow prompts:
+## Workflow Policies
 
-- `/ao-start` - manager stage: brainstorm → plan → PRD decomposition.
-- `/ao-run` - execution loop: implement → verify → test → review → commit → compound.
-- `/ao-continue` - resume interrupted workflow with validation and checkpoints.
-- `/ao-human` - list tasks tagged for human escalation (default tag `@human`).
+### Source of Truth
 
-## Compound Engineering Workflow
+- PRD JSON (`.agents/tasks/prd.json`) is the primary execution source
+- Specs are a secondary reference for anti-drift checks
+- If PRD and specs diverge, execution follows approved PRD and drift is tagged (`@spec-drift`)
 
-```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                        COMPOUND ENGINEERING CYCLE                                │
-│                                                                                  │
-│        "Each unit of work should make subsequent units easier"                  │
-│                                                                                  │
-│   ┌─────────────────────────────────────────────────────────────────────────┐   │
-│   │                                                                          │   │
-│   │     /ao-start          /ao-run              COMPOUND                     │   │
-│   │         │                  │                    │                        │   │
-│   │         ▼                  ▼                    ▼                        │   │
-│   │     ┌──────┐          ┌──────┐            ┌──────┐                       │   │
-│   │     │ PLAN │ ───────► │ WORK │ ────────► │LEARN │                       │   │
-│   │     └──────┘          └──────┘            └──────┘                       │   │
-│   │                                              │                           │   │
-│   │                                              │                           │   │
-│   │                                              ▼                           │   │
-│   │                                       docs/solutions/                    │   │
-│   │                                              │                           │   │
-│   │                                              │                           │   │
-│   │               ┌──────────────────────────────┘                           │   │
-│   │               │                                                           │   │
-│   │               ▼                                                           │   │
-│   │        NEXT ITERATION IS EASIER                                           │   │
-│   │        (learnings-researcher finds past solutions)                        │   │
-│   │                                                                           │   │
-│   └─────────────────────────────────────────────────────────────────────────┘   │
-│                                                                                  │
-└─────────────────────────────────────────────────────────────────────────────────┘
+### Git Flow
+
+- `main`: protected production branch, no direct pushes
+- `develop`: integration branch for test-stand deploy
+- `feature/<story-id>-<slug>`: one branch per story/task
+- Each new feature branch should use a dedicated worktree:
+  ```bash
+  git worktree add .codex/worktrees/<story-id> -b feature/<story-id>-<slug> develop
+  ```
+
+### Checkpoints
+
+Recovery checkpoints use `[ao-checkpoint]` prefix:
+
+```bash
+# Find checkpoints
+git log --grep='[ao-checkpoint]'
+
+# Restore
+git reset --hard <checkpoint-sha>
 ```
 
-### Workflow Phases
+## Roadmap
 
-| Command | Phase | Purpose | Output |
-|---------|-------|---------|--------|
-| `/ao-start` | PLAN | WHAT to build, HOW to build it | `docs/brainstorms/`, `docs/plans/`, `.agents/tasks/prd.json` |
-| `/ao-run` | WORK | Execute atomic stories with verify step | Code, tests, commits |
-| `/ao-run` (end) | LEARN | Extract patterns, document gotchas | `docs/solutions/<category>/` |
-| `/ao-continue` | RECOVER | Resume with validation | Checkpoints, state fixes |
+See [ROADMAP.md](ROADMAP.md) for planned features.
 
-### Compound Feedback Loop
+## Acknowledgments & License Attribution
+
+This project's workflow was inspired by the following sources:
+
+### Antfarm Patterns
+
+**Article:** [Antfarm Patterns: Orchestrating Specialized Agent Teams](https://www.vincirufus.com/posts/antfarm-patterns-orchestrating-specialized-agent-teams/) by Vinci Rufus
+
+Key concepts adapted:
+- Fresh context per step
+- Verifier agent (separate from developer)
+- Status protocols
+- Checkpoint systems
+- Metrics tracking
+
+### Ralph Loop
+
+**Article:** [The Ralph Loop: Autonomous AI Agent Pattern](https://www.vincirufus.com/posts/ralph-loop-compound-engineering-future-software-development/) by Vinci Rufus
+
+Key concepts adapted:
+- Iterative development with fresh contexts
+- Anti-drift patterns
+
+### compound-engineering-plugin
+
+**Repository:** [EveryInc/compound-engineering-plugin](https://github.com/EveryInc/compound-engineering-plugin) by Every
+
+**License:** MIT License
 
 ```
-docs/solutions/ ──► learnings-researcher (in /ao-start) ──► better plans
-      │
-      └──► pattern-recognition-specialist (in /ao-continue) ──► faster recovery
+MIT License
+
+Copyright (c) 2025 Every
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 ```
 
-Workflow source-of-truth policy:
+Key concepts adapted:
+- Review agent patterns
+- Research agent patterns
+- Multi-agent swarm orchestration
+- Compound documentation patterns
 
-- PRD JSON is the primary execution source for the loop.
-- Specs are a secondary reference for anti-drift checks.
-- If PRD and specs diverge, execution follows approved PRD and drift is tagged (recommended: `@spec-drift`).
+---
 
-Git flow policy:
-
-- `main`: protected production branch, no direct pushes.
-- `develop`: integration branch for test-stand deploy.
-- `feature/<story-id>-<slug>`: one branch per story/task.
-- Each new feature branch must be created with a dedicated worktree.
-- Recommended command:
-  `git worktree add .codex/worktrees/<story-id> -b feature/<story-id>-<slug> develop`
+This project is used non-commercially. All derivative work maintains attribution to original authors.

@@ -100,9 +100,12 @@ To add items to roadmap:
 
 ## Changelog
 
-### 2026-02-14
+### 2025-02-14
 
 - Added `/ao-start` with brainstorm → plan → PRD phases
 - Added `/ao-run` with verify step (inspired by Antfarm)
-- Added `/ao-continue` with validation swarm and checkpoints
-- Added references to Antfarm patterns and compound-engineering-plugin
+- Added `/ao-continue` with validation and checkpoints
+- Added `--from <phase>` flag for explicit resume point
+- Removed external plugin dependencies (uses built-in agents)
+- Added `WORKFLOW_DIAGRAMS.md` for visual reference
+- Added license attribution for compound-engineering-plugin (MIT)
