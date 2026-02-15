@@ -14,6 +14,8 @@ function parseArgs(argv) {
     agent: '',
     log: '',
     policies: '',
+    swarmAgent: '',
+    swarmSkill: '',
   };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -31,6 +33,12 @@ function parseArgs(argv) {
       i += 1;
     } else if (arg === '--policies') {
       out.policies = argv[i + 1] ?? '';
+      i += 1;
+    } else if (arg === '--swarm-agent') {
+      out.swarmAgent = argv[i + 1] ?? '';
+      i += 1;
+    } else if (arg === '--swarm-skill') {
+      out.swarmSkill = argv[i + 1] ?? '';
       i += 1;
     }
   }
@@ -107,7 +115,7 @@ function detectSkillsUsed(logText, knownSkills) {
 
 function failWithUsage() {
   console.error(
-    'Usage: skills-gate --matrix <path> --stage <stage> [--agent <name>] [--log <path>] [--policies <csv>]',
+    'Usage: skills-gate --matrix <path> --stage <stage> [--agent <name>] [--log <path>] [--policies <csv>] [--swarm-agent <name>] [--swarm-skill <name>]',
   );
   process.exit(2);
 }
@@ -143,6 +151,31 @@ function parseCsv(value) {
     .split(',')
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+function checkSwarmConstraints(stage, args) {
+  const violations = [];
+  const constraints = stage?.agentConstraints || {};
+
+  if (args.swarmSkill && args.agent) {
+    const forbiddenSkills = constraints.forbiddenSwarmSkills?.[args.agent] || [];
+    if (forbiddenSkills.includes(args.swarmSkill)) {
+      violations.push(
+        `agent '${args.agent}' cannot use swarm skill '${args.swarmSkill}' on stage '${args.stage}'`,
+      );
+    }
+  }
+
+  if (args.swarmAgent && args.agent) {
+    const forbiddenAgents = constraints.forbiddenSwarmAgents?.[args.agent] || [];
+    if (forbiddenAgents.includes(args.swarmAgent)) {
+      violations.push(
+        `agent '${args.agent}' cannot spawn swarm agent '${args.swarmAgent}' on stage '${args.stage}'`,
+      );
+    }
+  }
+
+  return violations;
 }
 
 function collectReasons(requiredSkills, requiredPolicies, installedSkills, stage, args) {
@@ -198,6 +231,9 @@ function main() {
     args,
   );
 
+  const swarmViolations = checkSwarmConstraints(stage, args);
+  reasons.push(...swarmViolations);
+
   let skillsUsed = [];
   let forbiddenSkillsUsed = [];
   const warnings = [];
@@ -237,6 +273,10 @@ function main() {
     skillsUsed,
     forbiddenSkillsUsed,
     installedSkills,
+    swarmAgent: args.swarmAgent || '',
+    swarmSkill: args.swarmSkill || '',
+    swarmViolations,
+    agentConstraints: stage?.agentConstraints || {},
     reasons,
     warnings,
   };

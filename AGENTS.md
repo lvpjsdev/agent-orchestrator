@@ -30,8 +30,14 @@ node scripts/skills-gate.mjs \
   --stage <stage-name> \
   [--agent <agent-name>] \
   [--log <log-path>] \
-  [--policies <csv>]
+  [--policies <csv>] \
+  [--swarm-agent <name>] \
+  [--swarm-skill <name>]
 ```
+
+**Parameters:**
+- `--swarm-agent <name>` - Check if current agent can spawn this agent type in swarm
+- `--swarm-skill <name>` - Check if current agent can use this skill in swarm
 
 ### Testing
 
@@ -183,13 +189,33 @@ git worktree add .codex/worktrees/<story-id> -b feature/<story-id>-<slug> develo
 
 ## Workflow Stages
 
-| Stage | Required Skills | Forbidden Skills |
-|-------|----------------|------------------|
-| manager | brainstorming, prd | coding-agent, yeet |
-| coder | coding-agent, react-best-practices, typescript-advanced-types | yeet, security-best-practices |
-| tester | e2e-testing-patterns, playwright | coding-agent |
-| reviewer | (none) | coding-agent |
-| devops | (none) | product-scope-change |
+| Stage | Required Skills | Forbidden Skills | Agent Constraints |
+|-------|----------------|------------------|-------------------|
+| manager | brainstorming, prd | coding-agent, yeet | - |
+| coder | coding-agent, react-best-practices, typescript-advanced-types | yeet, security-best-practices | claude only; codex cannot use coding-agent skill or spawn codex |
+| tester | e2e-testing-patterns, playwright | coding-agent | - |
+| reviewer | (none) | coding-agent | - |
+| devops | (none) | product-scope-change | - |
+
+### Agent Constraints Format
+
+In `agent-skills-matrix.json`, each stage can define `agentConstraints`:
+
+```json
+"agentConstraints": {
+  "allowedAgents": ["claude"],
+  "forbiddenSwarmSkills": {
+    "codex": ["coding-agent"]
+  },
+  "forbiddenSwarmAgents": {
+    "codex": ["codex"]
+  }
+}
+```
+
+- `allowedAgents` - Which agents can run as the primary agent for this stage
+- `forbiddenSwarmSkills` - Skills that specific agents cannot use in swarm mode
+- `forbiddenSwarmAgents` - Agent types that specific agents cannot spawn in swarm mode
 
 ## Key Files
 
