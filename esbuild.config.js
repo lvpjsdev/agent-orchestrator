@@ -17,6 +17,10 @@ const ASSETS = [
     from: 'scripts/install-prompts.mjs',
     to: 'scripts/install-prompts.mjs',
   },
+  {
+    from: 'scripts/burlaki-status.mjs',
+    to: 'scripts/burlaki-status.mjs',
+  },
 ];
 
 async function main() {

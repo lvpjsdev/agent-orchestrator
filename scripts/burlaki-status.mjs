@@ -50,16 +50,22 @@ function readPrd(path) {
 
 function getLastCheckpoint() {
   try {
-    const output = execSync('git log --grep="\\[burlaki-checkpoint\\]" -n 1 --format="%H|%ci|%s"', {
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe'],
-    }).trim();
+    const output = execSync(
+      'git log --grep="\\[burlaki-checkpoint\\]" -n 1 --format="%H%x00%ci%x00%s"',
+      {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+      },
+    ).trim();
 
     if (!output) {
       return null;
     }
 
-    const [sha, timestamp, subject] = output.split('|');
+    const parts = output.split('\0');
+    const sha = parts[0];
+    const timestamp = parts[1];
+    const subject = parts.slice(2).join('\0');
     const storyMatch = subject.match(/Story:\s*([a-zA-Z0-9-]+)/);
 
     return {
@@ -125,7 +131,7 @@ function main() {
   const args = parseArgs(process.argv.slice(2));
 
   if (args.help) {
-    console.log(HELP_TEXT);
+    process.stdout.write(HELP_TEXT);
     process.exit(0);
   }
 
@@ -148,6 +154,7 @@ function main() {
   const blocked = getBlockedStories(stories);
 
   const result = {
+    status: 'success',
     currentStage: prd.currentStage ?? prd.stage ?? 'unknown',
     pendingStories: pending,
     completedStories: completed,
@@ -157,9 +164,9 @@ function main() {
   };
 
   if (args.json) {
-    console.log(JSON.stringify(result, null, 2));
+    process.stdout.write(JSON.stringify(result, null, 2) + '\n');
   } else {
-    console.log(formatHuman(result));
+    process.stdout.write(formatHuman(result) + '\n');
   }
 
   process.exit(0);
