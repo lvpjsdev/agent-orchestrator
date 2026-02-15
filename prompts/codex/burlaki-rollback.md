@@ -1,6 +1,6 @@
 ---
 description: Rollback to a previous checkpoint with safety checks
-argument-hint: "--to <target> [--dry-run] [--yes]"
+argument-hint: "--to <target> [--dry-run] [--yes] [--no-input]"
 ---
 
 # Burlaki Rollback — Revert to Previous Checkpoint
@@ -15,6 +15,26 @@ Rollback the workflow to a previous checkpoint, story state, or specific commit.
   - `<sha>` — Direct commit SHA (7+ characters)
 - `--dry-run` — Show preview without making changes
 - `--yes` — Skip confirmation prompt (for automation)
+- `--no-input` — Non-interactive mode: implies `--yes`, uses defaults, outputs JSON
+
+## Mode Detection
+
+Parse `$ARGUMENTS` to detect non-interactive mode:
+
+**Non-interactive when ANY of:**
+- `--no-input` flag present
+- `--yes` flag present
+- `WORKFLOW_NON_INTERACTIVE=true` environment variable
+
+**Non-interactive behavior:**
+- Skip all confirmation prompts (equivalent to `--yes`)
+- Use `last-checkpoint` as default target if `--to` not specified
+- Output structured JSON instead of human-readable format
+- Exit code 2 if required information cannot be inferred
+
+**Defaults (when --no-input):**
+- Target: `last-checkpoint`
+- Dry run: `false`
 
 ## Architecture
 
@@ -161,8 +181,23 @@ if [ "$DRY_RUN" = true ]; then
   echo "═══════════════════════════════════════════════════════════════"
   exit 0
 fi
+```
 
-# Skip if --yes
+**If Non-Interactive Mode:**
+Skip confirmation. Output JSON and proceed to Phase 5.
+
+```json
+{
+  "status": "approved",
+  "mode": "non-interactive",
+  "target": "<target-sha>",
+  "auto_approved": true,
+  "reason": "--no-input or --yes flag set"
+}
+```
+
+**If Interactive Mode:**
+```bash
 if [ "$YES" != true ]; then
   echo ""
   echo "This will reset HEAD, index, and working tree to $TARGET_SHORT"
@@ -310,6 +345,30 @@ git log --grep='\[burlaki-checkpoint\]' --oneline
 
 # Skip confirmation (automation)
 /burlaki-rollback --to last-checkpoint --yes
+
+# Non-interactive mode (CI/CD)
+/burlaki-rollback --no-input --to last-checkpoint
+```
+
+## Non-Interactive Output
+
+When using `--no-input` or `--yes`, output structured JSON:
+
+```json
+{
+  "status": "done",
+  "mode": "non-interactive",
+  "target": {
+    "sha": "abc1234",
+    "type": "last-checkpoint"
+  },
+  "commits_discarded": 3,
+  "auto_approved": true,
+  "recovery": {
+    "undo": "git reset --hard ORIG_HEAD",
+    "history": "git reflog"
+  }
+}
 ```
 
 ## Output Summary
