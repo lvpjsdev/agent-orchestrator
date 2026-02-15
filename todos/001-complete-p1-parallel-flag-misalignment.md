@@ -28,6 +28,7 @@ The `--parallel` flag is documented in `burlaki-run.md` (lines 4, 402-425) but t
 ## Proposed Solutions
 
 ### Option 1: Remove flag until implemented (Recommended)
+
 - **Pros:** Clean separation of shipped vs planned features
 - **Cons:** Loses documentation of planned feature
 - **Effort:** Small
@@ -45,7 +46,9 @@ The `--parallel` flag is documented in `burlaki-run.md` (lines 4, 402-425) but t
 - **Risk:** Low
 
 ### Option 3: Move to roadmap only
+
 Remove from command docs, document only in roadmap as planned feature.
+
 - **Pros:** Clear separation
 - **Cons:** Less discoverable
 - **Effort:** Small
