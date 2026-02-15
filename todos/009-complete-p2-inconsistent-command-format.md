@@ -46,7 +46,7 @@ Add to CLI Conventions section:
 ### Option 2: Standardize to slash format
 Convert all `burlaki <cmd>` to `/burlaki-<cmd>`.
 - **Pros:** Single format
-- **Cons:** May not match actual CLI interface
+- **Cons:** May not match actual CLI behavior
 - **Effort:** Medium
 - **Risk:** Medium
 

@@ -46,8 +46,9 @@ Consolidate v0.1.5 into v0.2.0, v0.2.5 into v0.3.0.
 - **Effort:** Medium
 - **Risk:** Low
 
-### Option 2: Keep current, add explanation
-Add note explaining the non-standard numbering:
+### Option 2: Keep current, add clarification
+Add note clarifying the non-standard numbering:
+
 > "Note: Versions use feature-based numbering. v0.1.5 = 'between v0.1 and v0.2 features'"
 - **Pros:** No renumbering needed
 - **Cons:** Still non-standard, confusing

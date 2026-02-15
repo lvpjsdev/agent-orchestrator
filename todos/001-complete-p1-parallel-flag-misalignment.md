@@ -15,13 +15,14 @@ The `--parallel` flag is documented in `burlaki-run.md` (lines 4, 402-425) but t
 
 ## Findings
 
-**Location:** 
-- `prompts/codex/burlaki-run.md` line 4: `argument-hint: "[--no-commit] [--parallel]"`
-- `prompts/codex/burlaki-run.md` lines 402-425: Parallel execution documentation
-- `ROADMAP_full.md` line 387: `--parallel 4` flag listed as unchecked
+**Location:**
+
+- `prompts/codex/burlaki-run.md` — `--parallel` flag in argument-hint and documentation
+- `ROADMAP_full.md` — v0.4 Parallel Execution marked as "not started"
 
 **Evidence:**
-- Roadmap Enhancement Summary (line 21): "Parallel feature exists in code but roadmap shows 'not started' — alignment needed"
+
+- Parallel feature documented in prompts but not implemented
 - This violates the principle of documented behavior matching implementation
 
 ## Proposed Solutions
@@ -73,4 +74,4 @@ Option 1: Remove `--parallel` from `burlaki-run.md` argument-hint and documentat
 
 ## Resources
 
-- Related: ROADMAP_full.md Enhancement Summary (line 21)
+- Related: ROADMAP_full.md v0.4 Parallel Execution section

@@ -18,6 +18,7 @@ Lines 203-211 contain a malformed code block structure where a file path appears
 **Location:** ROADMAP_full.md lines 203-211
 
 **Current (problematic):**
+
 ```markdown
 - [ ] **Event Store** — Append-only log for pattern extraction
   ```
@@ -29,12 +30,14 @@ Lines 203-211 contain a malformed code block structure where a file path appears
 ```
 
 **Issues:**
+
 1. First code block contains only a file path (misleading)
 2. Not clear this is a path reference vs code
 
 ## Proposed Solutions
 
 ### Option 1: Fix formatting (Recommended)
+
 ```markdown
 - [ ] **Event Store** — Append-only log for pattern extraction
   
@@ -44,13 +47,16 @@ Lines 203-211 contain a malformed code block structure where a file path appears
   {"ts":"2026-02-15T10:00:00Z","type":"story_started","story_id":"auth-001","agent":"coder"}
   ```
 ```
+
 - **Pros:** Clear, well-formatted
 - **Cons:** None
 - **Effort:** Small
 - **Risk:** Low
 
 ### Option 2: Remove path block
+
 Just show JSONL content with inline path mention.
+
 - **Pros:** Cleaner
 - **Cons:** Less explicit
 - **Effort:** Small
@@ -73,9 +79,11 @@ Option 1: Replace malformed code block with explicit "Path:" label and properly 
 
 ## Work Log
 
-| Date | Action | Result |
-|------|--------|--------|
-| 2026-02-15 | Pattern analysis identified issue | Finding documented |
+```markdown
+| Date       | Action                             | Result              |
+|------------|------------------------------------|---------------------|
+| 2026-02-15 | Pattern analysis identified issue  | Finding documented  |
+```
 
 ## Resources
 
