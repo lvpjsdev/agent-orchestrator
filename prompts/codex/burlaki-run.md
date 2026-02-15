@@ -1,6 +1,6 @@
 ---
 description: Run execution cycle with verify step (per-story loop)
-argument-hint: "[iterations] [--no-commit]"
+argument-hint: "[iterations] [--no-commit] [--no-input]"
 ---
 
 # Burlaki Run — Execution with Verification
@@ -10,6 +10,26 @@ Execute PRD stories through orchestrated agent pipeline with fresh contexts.
 ## Input
 - Optional `iterations` (default: 5)
 - Optional `--no-commit` for dry run
+- Optional `--no-input` for non-interactive mode
+
+## Mode Detection
+
+Parse `$ARGUMENTS` to detect non-interactive mode:
+
+**Non-interactive when ANY of:**
+- `--no-input` flag present
+- `WORKFLOW_NON_INTERACTIVE=true` environment variable
+
+**Non-interactive behavior:**
+- Run all pending stories without per-story confirmation
+- Auto-approve changes (equivalent to `--yes`)
+- Output progress as structured JSON lines
+- Stop on escalation triggers (blocked stories) but continue others
+
+**Defaults (when --no-input):**
+- Iterations: 5 (or value from command line)
+- Auto-approve: true
+- Commit: true (unless `--no-commit` also set)
 
 ## Architecture Overview
 
@@ -487,4 +507,36 @@ Next Steps:
 2. Run /burlaki-continue after resolution
 3. Create PR: gh pr create --title "..."
 ═══════════════════════════════════════════════════════════════
+```
+
+## Non-Interactive Output
+
+When using `--no-input`, output structured JSON with progress updates:
+
+**Per-story progress (JSON lines):**
+```json
+{"event": "story_start", "story_id": "auth-001", "mode": "non-interactive"}
+{"event": "story_done", "story_id": "auth-001", "status": "completed", "time_sec": 180}
+{"event": "story_start", "story_id": "auth-002", "mode": "non-interactive"}
+{"event": "story_blocked", "story_id": "auth-003", "reason": "escalation: failed verify 3x"}
+```
+
+**Final summary:**
+```json
+{
+  "status": "done",
+  "mode": "non-interactive",
+  "stories": {
+    "total": 7,
+    "completed": 6,
+    "blocked": 0,
+    "escalated": 1
+  },
+  "metrics": {
+    "total_time_sec": 11700,
+    "avg_cycle_time_sec": 1680,
+    "first_pass_success_rate": 0.71
+  },
+  "escalated_stories": ["auth-003"]
+}
 ```

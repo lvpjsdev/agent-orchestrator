@@ -13,7 +13,8 @@
     "./cli": "./dist/scripts/skills-gate.mjs"
   },
   "bin": {
-    "burlaki-skills-gate": "./dist/scripts/skills-gate.mjs"
+    "burlaki-skills-gate": "./dist/scripts/skills-gate.mjs",
+    "burlaki-status": "./dist/scripts/burlaki-status.mjs"
   },
   "files": [
     "dist/",
@@ -30,6 +31,7 @@
     "check": "biome check .",
     "check:fix": "biome check . --write",
     "skills:gate": "node scripts/skills-gate.mjs",
+    "burlaki:status": "node scripts/burlaki-status.mjs",
     "prompts:install": "node scripts/install-prompts.mjs --tool codex && node scripts/install-prompts.mjs --tool opencode && node scripts/install-prompts.mjs --tool claude",
     "prompts:install:codex": "node scripts/install-prompts.mjs --tool codex",
     "prompts:install:opencode": "node scripts/install-prompts.mjs --tool opencode",

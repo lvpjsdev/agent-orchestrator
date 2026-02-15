@@ -1,6 +1,6 @@
 ---
 description: Resume interrupted workflow with state validation and checkpoints
-argument-hint: "[--validate-only] [--from <phase>] [--no-checkpoint]"
+argument-hint: "[--validate-only] [--from <phase>] [--no-checkpoint] [--no-input]"
 ---
 
 # Burlaki Continue — Resume with Validation and Checkpoints
@@ -11,6 +11,25 @@ Resume an interrupted compound engineering workflow. Creates restore point befor
 - `--validate-only` — Only validate state, don't resume (no checkpoint needed)
 - `--from <phase>` — Force resume from specific phase: `brainstorm`, `plan`, `prd`, `run`
 - `--no-checkpoint` — Skip checkpoint creation (not recommended)
+- `--no-input` — Non-interactive mode: auto-select phase, skip prompts, output JSON
+
+## Mode Detection
+
+Parse `$ARGUMENTS` to detect non-interactive mode:
+
+**Non-interactive when ANY of:**
+- `--no-input` flag present
+- `WORKFLOW_NON_INTERACTIVE=true` environment variable
+
+**Non-interactive behavior:**
+- Auto-detect phase from artifacts (no "which phase?" prompt)
+- Auto-select default for all user choices
+- Fix drift automatically if `severe_drift_action` in config allows
+- Output structured JSON instead of human-readable format
+
+**Defaults (when --no-input):**
+- Phase: Auto-detect from existing artifacts
+- Drift action: Use `severe_drift_action` from `.agents/config.json` (fallback: `force-continue`)
 
 ## Architecture Overview
 
@@ -220,7 +239,21 @@ Checkpoint: abc1234
 
 ### Phase 4: User Decision
 
-**If drift found, use AskUserQuestion:**
+**If Non-Interactive Mode:**
+
+Skip prompts. Use defaults from config or safe fallbacks.
+
+```json
+{
+  "status": "decided",
+  "mode": "non-interactive",
+  "drift_found": true,
+  "action": "fix-and-continue",
+  "reason": "Using severe_drift_action from config (fallback: force-continue)"
+}
+```
+
+**If Interactive Mode and drift found, use AskUserQuestion:**
 
 ```
 Question: "Drift detected. How to proceed?"
@@ -405,6 +438,31 @@ git reset --hard <sha>
 # Squash checkpoints after feature complete
 git rebase -i develop
 # Mark checkpoint commits as 'fixup' or 'squash'
+```
+
+## Non-Interactive Output
+
+When using `--no-input`, output structured JSON:
+
+```json
+{
+  "status": "done",
+  "mode": "non-interactive",
+  "detected_phase": "run",
+  "validation": {
+    "code_vs_prd": "consistent",
+    "git_state": "clean",
+    "tags": "accurate"
+  },
+  "checkpoint": {
+    "sha": "abc1234",
+    "created": true
+  },
+  "resuming": {
+    "from": "auth-005",
+    "remaining_stories": 3
+  }
+}
 ```
 
 ## Output Summary
