@@ -17,7 +17,13 @@
       "optionalSkills": ["ui-skills", "design-system-patterns", "openai-docs"],
       "forbiddenSkills": ["yeet", "security-best-practices"],
       "agentConstraints": {
-        "allowedAgents": ["claude"]
+        "allowedAgents": ["claude"],
+        "forbiddenSwarmSkills": {
+          "codex": ["coding-agent"]
+        },
+        "forbiddenSwarmAgents": {
+          "codex": ["codex"]
+        }
       }
     },
     "tester": {
