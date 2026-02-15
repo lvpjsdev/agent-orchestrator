@@ -57,6 +57,14 @@ See [README.md](../../README.md) for the full compound engineering cycle diagram
 ### Step 0: Select Next Story
 
 ```bash
+# Lazy migration: add schema_version if missing
+SCHEMA_VERSION=$(jq -r '.schema_version // empty' .agents/tasks/prd.json 2>/dev/null)
+if [ -z "$SCHEMA_VERSION" ]; then
+  echo "Migrating PRD to schema_version 1.0.0..."
+  jq '. + {schema_version: "1.0.0"}' .agents/tasks/prd.json > .agents/tasks/prd.json.tmp && \
+    mv .agents/tasks/prd.json.tmp .agents/tasks/prd.json
+fi
+
 # Get next pending story with satisfied dependencies
 jq -r '.stories[] | select(.status == "pending") | select(.depends_on | length == 0 or all(. as $dep | .[].stories[]? | select(.id == $dep) | .status == "done")) | .id' .agents/tasks/prd.json | head -1
 ```

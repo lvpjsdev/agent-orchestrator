@@ -100,12 +100,13 @@ function formatHuman(result) {
   lines.push('Burlaki Workflow Status');
   lines.push('');
 
-  lines.push(`  Stage:       ${result.currentStage}`);
+  lines.push(`  Stage:          ${result.currentStage}`);
+  lines.push(`  Schema Version: ${result.schemaVersion ?? 'legacy (unversioned)'}`);
   lines.push('');
   lines.push('  Stories:');
-  lines.push(`    Pending:   ${result.pendingStories}`);
-  lines.push(`    Completed: ${result.completedStories}`);
-  lines.push(`    Total:     ${result.totalStories}`);
+  lines.push(`    Pending:      ${result.pendingStories}`);
+  lines.push(`    Completed:    ${result.completedStories}`);
+  lines.push(`    Total:        ${result.totalStories}`);
   lines.push('');
 
   if (result.lastCheckpoint) {
@@ -158,6 +159,7 @@ function main() {
 
   const result = {
     status: 'success',
+    schemaVersion: prd.schema_version ?? null,
     currentStage: prd.currentStage ?? prd.stage ?? 'unknown',
     pendingStories: pending,
     completedStories: completed,
