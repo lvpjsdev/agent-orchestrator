@@ -64,9 +64,9 @@ Option 1: Remove `--parallel` from `burlaki-run.md` argument-hint and documentat
 
 ## Acceptance Criteria
 
-- [ ] Remove `--parallel` from argument-hint in all burlaki-run docs
-- [ ] Remove or comment out parallel execution section (lines 402-425)
-- [ ] Roadmap accurately reflects implementation status
+- [x] Remove `--parallel` from argument-hint in all burlaki-run docs
+- [x] Remove or comment out parallel execution section (lines 402-425)
+- [x] Roadmap accurately reflects implementation status
 
 ## Work Log
 
