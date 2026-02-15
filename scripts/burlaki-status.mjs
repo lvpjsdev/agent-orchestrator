@@ -69,6 +69,9 @@ function getLastCheckpoint() {
       storyId: storyMatch ? storyMatch[1] : null,
     };
   } catch (error) {
+    if (error.status !== 128) {
+      console.error(`Warning: git log failed: ${error.message}`);
+    }
     return null;
   }
 }
