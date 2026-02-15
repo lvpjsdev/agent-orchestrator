@@ -19,7 +19,7 @@ Lines 203-211 contain a malformed code block structure where a file path appears
 
 **Current (problematic):**
 
-```markdown
+````markdown
 - [ ] **Event Store** — Append-only log for pattern extraction
   ```
   .agents/events.jsonl
@@ -27,7 +27,7 @@ Lines 203-211 contain a malformed code block structure where a file path appears
   ```jsonl
   {"ts":"2026-02-15T10:00:00Z",...}
   ```
-```
+````
 
 **Issues:**
 
@@ -38,7 +38,7 @@ Lines 203-211 contain a malformed code block structure where a file path appears
 
 ### Option 1: Fix formatting (Recommended)
 
-```markdown
+````markdown
 - [ ] **Event Store** — Append-only log for pattern extraction
   
   Path: `.agents/events.jsonl`
@@ -46,7 +46,7 @@ Lines 203-211 contain a malformed code block structure where a file path appears
   ```jsonl
   {"ts":"2026-02-15T10:00:00Z","type":"story_started","story_id":"auth-001","agent":"coder"}
   ```
-```
+````
 
 - **Pros:** Clear, well-formatted
 - **Cons:** None

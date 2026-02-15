@@ -34,9 +34,11 @@ The `--parallel` flag is documented in `burlaki-run.md` (lines 4, 402-425) but t
 - **Risk:** Low
 
 ### Option 2: Add "reserved" note
-```markdown
+
+```text
 --parallel N    # (Reserved for v0.4) Currently ignored
 ```
+
 - **Pros:** Documents intent without promising functionality
 - **Cons:** Users might still try to use it
 - **Effort:** Small
