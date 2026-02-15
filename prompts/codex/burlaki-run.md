@@ -1,6 +1,6 @@
 ---
 description: Run execution cycle with verify step (per-story loop)
-argument-hint: "[iterations] [--no-commit] [--parallel]"
+argument-hint: "[iterations] [--no-commit]"
 ---
 
 # Burlaki Run — Execution with Verification
@@ -10,7 +10,6 @@ Execute PRD stories through orchestrated agent pipeline with fresh contexts.
 ## Input
 - Optional `iterations` (default: 5)
 - Optional `--no-commit` for dry run
-- Optional `--parallel` for independent stories
 
 ## Architecture Overview
 
@@ -42,7 +41,7 @@ See [README.md](../../README.md) for the full compound engineering cycle diagram
 jq -r '.stories[] | select(.status == "pending") | select(.depends_on | length == 0 or all(. as $dep | .[].stories[]? | select(.id == $dep) | .status == "done")) | .id' .agents/tasks/prd.json | head -1
 ```
 
-**If `--parallel`:** Get ALL pending stories with satisfied dependencies.
+**Note:** Parallel execution planned for v0.4 (see ROADMAP_full.md).
 
 ### Step 1: SETUP (per story)
 
@@ -398,30 +397,6 @@ Example:
 - Brainstorm: docs/brainstorms/...
 - Plan: docs/plans/...
 ```
-
-## Parallel Execution Mode
-
-When `--parallel` flag is set:
-
-1. **Identify parallelizable stories:**
-   - Status: pending
-   - Dependencies: all satisfied
-
-2. **Spawn multiple implementers:**
-   ```javascript
-   // Stories with no dependencies on each other
-   parallel_stories.forEach(story => {
-     Task({
-       subagent_type: "CoderAgent",
-       prompt: `Implement story ${story.id}...`,
-       run_in_background: true
-     })
-   })
-   ```
-
-3. **Each story proceeds through its own pipeline**
-
-4. **Stories with dependencies wait for dependencies to complete**
 
 ## Metrics Tracking
 
