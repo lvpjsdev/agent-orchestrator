@@ -4,6 +4,7 @@ import { execSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 
 const PRD_PATH = '.agents/tasks/prd.json';
+const STORY_ID_RE = /Story:\s*([a-zA-Z0-9-]+)/;
 const HELP_TEXT = `Burlaki Status - Show current workflow state
 
 Usage: burlaki-status [options]
@@ -11,6 +12,7 @@ Usage: burlaki-status [options]
 Options:
   --json    Output as JSON for programmatic use
   --help    Show this help message
+  -h        Show this help message (short alias)
 
 Output:
   - Current workflow stage
@@ -66,7 +68,7 @@ function getLastCheckpoint() {
     const sha = parts[0];
     const timestamp = parts[1];
     const subject = parts.slice(2).join('\0');
-    const storyMatch = subject.match(/Story:\s*([a-zA-Z0-9-]+)/);
+    const storyMatch = subject.match(STORY_ID_RE);
 
     return {
       sha: sha.substring(0, 7),
