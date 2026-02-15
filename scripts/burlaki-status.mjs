@@ -77,6 +77,7 @@ function getLastCheckpoint() {
       storyId: storyMatch ? storyMatch[1] : null,
     };
   } catch (error) {
+    // Git exits with 128 when no matching commits found (expected when no checkpoints exist)
     if (error.status !== 128) {
       console.error(`Warning: git log failed: ${error.message}`);
     }
@@ -142,7 +143,7 @@ function main() {
   if (!prd) {
     const errorMsg = `No PRD found at ${PRD_PATH}. Run /burlaki-start first.`;
     if (args.json) {
-      console.log(JSON.stringify({ status: 'error', error: errorMsg, code: 1 }));
+      process.stdout.write(JSON.stringify({ status: 'error', error: errorMsg, code: 1 }) + '\n');
     } else {
       console.error(errorMsg);
     }
