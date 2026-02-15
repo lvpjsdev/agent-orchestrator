@@ -78,6 +78,13 @@ echo "Git: branch=$BRANCH, working_dir=$([ -z "$DIRTY" ] && echo 'clean' || echo
 
 # Check PRD story status
 if [ -f "$PRD" ]; then
+  # Lazy migration: add schema_version if missing
+  SCHEMA_VERSION=$(jq -r '.schema_version // empty' "$PRD" 2>/dev/null)
+  if [ -z "$SCHEMA_VERSION" ]; then
+    echo "Migrating PRD to schema_version 1.0.0..."
+    jq '. + {schema_version: "1.0.0"}' "$PRD" > "${PRD}.tmp" && mv "${PRD}.tmp" "$PRD"
+  fi
+  
   TOTAL=$(jq '.stories | length' "$PRD" 2>/dev/null || echo 0)
   DONE=$(jq '[.stories[] | select(.status == "done")] | length' "$PRD" 2>/dev/null || echo 0)
   echo "Stories: $DONE/$TOTAL done"
