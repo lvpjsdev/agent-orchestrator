@@ -89,8 +89,8 @@ fi
 
 ## Quality Gates
 
-- [ ] Manual test: create new PRD, verify schema_version present
-- [ ] Manual test: load old PRD, verify auto-migration
+- [x] Manual test: create new PRD, verify schema_version present
+- [x] Manual test: load old PRD, verify auto-migration
 
 ## Dependencies & Risks
 
