@@ -98,6 +98,7 @@ fi
 - `jq` for JSON manipulation (already required)
 
 **Risks:**
+
 | Risk | Mitigation |
 |------|------------|
 | Old PRDs in unusual formats | Fallback to manual fix with clear error message |
