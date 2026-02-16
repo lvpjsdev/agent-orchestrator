@@ -61,12 +61,18 @@ See [README.md](../../README.md) for the full compound engineering cycle diagram
 SCHEMA_VERSION=$(jq -r '.schema_version // empty' .agents/tasks/prd.json 2>/dev/null)
 if [ -z "$SCHEMA_VERSION" ]; then
   echo "Migrating PRD to schema_version 1.0.0..."
-  jq '. + {schema_version: "1.0.0"}' .agents/tasks/prd.json > .agents/tasks/prd.json.tmp && \
+  if jq '. + {schema_version: "1.0.0"}' .agents/tasks/prd.json > .agents/tasks/prd.json.tmp 2>/dev/null; then
     mv .agents/tasks/prd.json.tmp .agents/tasks/prd.json
+  else
+    echo "Warning: Failed to migrate PRD schema_version"
+  fi
 fi
 
 # Get next pending story with satisfied dependencies
-jq -r '.stories[] | select(.status == "pending") | select(.depends_on | length == 0 or all(. as $dep | .[].stories[]? | select(.id == $dep) | .status == "done")) | .id' .agents/tasks/prd.json | head -1
+# Note: Use --argjson to pass PRD as variable for correct context in all()
+jq -r --argjson prd "$(cat .agents/tasks/prd.json)" \
+  '.stories[] | select(.status == "pending") | select(.depends_on | length == 0 or all(. as $dep | $prd.stories[]? | select(.id == $dep) | .status == "done")) | .id' \
+  .agents/tasks/prd.json | head -1
 ```
 
 **Note:** Parallel execution planned for v0.4 (see ROADMAP_full.md).
