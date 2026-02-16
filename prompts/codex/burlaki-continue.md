@@ -78,6 +78,17 @@ echo "Git: branch=$BRANCH, working_dir=$([ -z "$DIRTY" ] && echo 'clean' || echo
 
 # Check PRD story status
 if [ -f "$PRD" ]; then
+  # Lazy migration: add schema_version if missing
+  SCHEMA_VERSION=$(jq -r '.schema_version // empty' "$PRD" 2>/dev/null)
+  if [ -z "$SCHEMA_VERSION" ]; then
+    echo "Migrating PRD to schema_version 1.0.0..."
+    if jq '. + {schema_version: "1.0.0"}' "$PRD" > "${PRD}.tmp" 2>/dev/null; then
+      mv "${PRD}.tmp" "$PRD"
+    else
+      echo "Warning: Failed to migrate PRD schema_version"
+    fi
+  fi
+  
   TOTAL=$(jq '.stories | length' "$PRD" 2>/dev/null || echo 0)
   DONE=$(jq '[.stories[] | select(.status == "done")] | length' "$PRD" 2>/dev/null || echo 0)
   echo "Stories: $DONE/$TOTAL done"
@@ -325,7 +336,10 @@ elif [ "$VALIDATION" = "DRIFTED" ] && [ "$FIX_DRIFT" = true ]; then
   START_STORY="${DRIFTED_STORIES[0]}"
 else
   # Start from first pending story with satisfied deps
-  START_STORY=$(jq -r '.stories[] | select(.status == "pending") | select(.depends_on | length == 0 or all(. as $dep | .. | select(.id == $dep) | .status == "done")) | .id' .agents/tasks/prd.json | head -1)
+  # Note: Use --argjson to pass PRD as variable for correct context in all()
+  START_STORY=$(jq -r --argjson prd "$(cat .agents/tasks/prd.json)" \
+    '.stories[] | select(.status == "pending") | select(.depends_on | length == 0 or all(. as $dep | $prd.stories[]? | select(.id == $dep) | .status == "done")) | .id' \
+    .agents/tasks/prd.json | head -1)
 fi
 ```
 

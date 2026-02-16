@@ -106,7 +106,7 @@ The solution leverages Git's built-in recovery mechanisms:
 
 ## Related Issues
 
-No related issues documented yet.
+- See also: [cli-non-interactive-mode-Workflow-20260215.md](./cli-non-interactive-mode-Workflow-20260215.md) - Added `--no-input` flag for CI/CD automation
 
 ## References
 

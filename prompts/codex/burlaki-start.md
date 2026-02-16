@@ -229,22 +229,23 @@ See [README.md](../../README.md) for the full compound engineering cycle diagram
    - Reference **source plan section**
    - List **likely files** to be modified
 
-3. **Write PRD JSON:**
-   
-   ```bash
-   mkdir -p .agents/tasks
-   ```
-   
-   File: `.agents/tasks/prd.json`
-   
-   Structure:
-   ```json
-   {
-     "version": 1,
-     "created": "YYYY-MM-DDTHH:mm:ssZ",
-     "plan": "docs/plans/YYYY-MM-DD-<type>-<name>-plan.md",
-     "brainstorm": "docs/brainstorms/YYYY-MM-DD-<topic>-brainstorm.md",
-     "stories": [
+  3. **Write PRD JSON:**
+    
+    ```bash
+    mkdir -p .agents/tasks
+    ```
+    
+    File: `.agents/tasks/prd.json`
+    
+    Structure:
+    ```json
+    {
+      "schema_version": "1.0.0",
+      "version": 1,
+      "created": "YYYY-MM-DDTHH:mm:ssZ",
+      "plan": "docs/plans/YYYY-MM-DD-<type>-<name>-plan.md",
+      "brainstorm": "docs/brainstorms/YYYY-MM-DD-<topic>-brainstorm.md",
+      "stories": [
        {
          "id": "<module>-001",
          "title": "<Action verb> <noun>",
@@ -264,11 +265,12 @@ See [README.md](../../README.md) for the full compound engineering cycle diagram
    }
    ```
 
-   **Example:**
-   ```json
-   {
-     "version": 1,
-     "created": "2026-02-14T10:00:00Z",
+    **Example:**
+    ```json
+    {
+      "schema_version": "1.0.0",
+      "version": 1,
+      "created": "2026-02-14T10:00:00Z",
      "plan": "docs/plans/2026-02-14-feat-user-auth-plan.md",
      "brainstorm": "docs/brainstorms/2026-02-14-auth-brainstorm.md",
      "stories": [
