@@ -13,8 +13,8 @@
     "./cli": "./dist/scripts/skills-gate.mjs"
   },
   "bin": {
-    "burlaki-skills-gate": "./dist/scripts/skills-gate.mjs",
-    "burlaki-status": "./dist/scripts/burlaki-status.mjs"
+    "burlaki-skills-gate": "dist/scripts/skills-gate.mjs",
+    "burlaki-status": "dist/scripts/burlaki-status.mjs"
   },
   "files": [
     "dist/",
