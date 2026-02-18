@@ -2,56 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [0.1.0] - 2026-02-14
+## [Unreleased]
 
-### Breaking Changes
-
-- Package renamed: `@lvpjsdev/agent-orchestrator` → `@lvpjsdev/burlaki`
-- CLI command renamed: `ao-skills-gate` → `burlaki-skills-gate`
-
-#### Migration Guide
-
-1. Uninstall old package and install new:
-
-   ```bash
-   pnpm remove @lvpjsdev/agent-orchestrator
-   pnpm add @lvpjsdev/burlaki
-   ```
-
-2. Update import statements:
-
-   ```js
-   // Old
-   import matrix from '@lvpjsdev/agent-orchestrator';
-   
-   // New
-   import matrix from '@lvpjsdev/burlaki';
-   ```
-
-3. Update CLI calls in scripts/CI:
-
-   ```bash
-   # Old
-   pnpm dlx ao-skills-gate --matrix ./agent-skills-matrix.json --stage coder
-   
-   # New
-   pnpm dlx burlaki-skills-gate --matrix ./agent-skills-matrix.json --stage coder
-   ```
-
-4. Check and update other files:
-
-   - `package.json` scripts: replace `ao-skills-gate` with `burlaki-skills-gate`
-   - CI/CD configurations (GitHub Actions, GitLab CI, etc.)
-   - Configuration files referencing the package
-   - Comments and documentation in your project
+## [0.1.1] - 2026-02-18
 
 ### Added
+- Add `/workflows:deepen-plan` command to enrich research-oriented plans with deeper planning steps
+- Add PRD validation tooling, including the JSON Schema, `.env.example`, and accompanying unit testing scaffolding for the CLI
 
-- Initial public release
-- Agent skills matrix JSON configuration
-- Skills gate CLI for workflow governance
-- Codex prompts installation script
-- Slash commands: `/burlaki-start`, `/burlaki-run`, `/burlaki-continue`, `/burlaki-human`, `/burlaki-skills-gate`, `/burlaki-matrix`, `/burlaki-onboard`
+### Refactored
+- Modularize the workflow prompts by splitting `burlaki-start.md` into dedicated modular sub-prompts under `prompts/codex/workflow/`
+
+### Changed
+- Update the `/burlaki-run` prompt to reference the new `/workflows:deepen-plan` command and reflect the modular workflow structure
+- Adjust orchestration scripts (skills-gate, prompt references, etc.) so the new prompt structure and tests are discoverable and runnable
