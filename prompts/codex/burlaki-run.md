@@ -41,6 +41,10 @@ See [README.md](../../README.md) for the full compound engineering cycle diagram
 
 ## Pre-flight Check
 
+**Before starting work:**
+
+For deeper research on your plan, consider running `/burlaki-deepen-plan` to enhance each section with best practices, industry patterns, and real-world examples.
+
 1. **Validate PRD exists:**
    ```bash
    test -f .agents/tasks/prd.json || { echo "Missing PRD. Run /burlaki-start first."; exit 1; }
