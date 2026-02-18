@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "stages": {
+    "coder": {
+      "label": "Coder Stage",
+      "requiredSkills": ["skill-a"],
+      "optionalSkills": ["optional-skill"],
+      "forbiddenSkills": ["forbidden-skill"],
+      "requiredPolicies": ["policy-a"],
+      "agentConstraints": {
+        "allowedAgents": ["claude", "burlaki"],
+        "forbiddenSwarmSkills": {
+          "claude": ["forbidden-skill"]
+        },
+        "forbiddenSwarmAgents": {}
+      }
+    }
+  }
+}

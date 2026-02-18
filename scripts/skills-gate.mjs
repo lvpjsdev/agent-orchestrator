@@ -3,6 +3,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { basename, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const SKILL_NAME_RE = /^name:\s*([^\n]+)$/m;
 const QUOTES_TRIM_RE = /^["']|["']$/g;
@@ -120,16 +121,30 @@ function failWithUsage() {
   process.exit(2);
 }
 
-function loadMatrix(matrixPath) {
+export function readMatrixFile(matrixPath) {
   if (!existsSync(matrixPath)) {
-    console.error(`Matrix not found: ${matrixPath}`);
-    process.exit(2);
+    const error = new Error(`Matrix not found: ${matrixPath}`);
+    error.code = 'MATRIX_NOT_FOUND';
+    throw error;
   }
   try {
     return JSON.parse(readFileSync(matrixPath, 'utf8'));
   } catch (error) {
-    console.error(`Failed to parse matrix file: ${matrixPath}`);
-    console.error(error);
+    const parseError = new Error(`Failed to parse matrix file: ${matrixPath}`);
+    parseError.code = 'MATRIX_PARSE_ERROR';
+    parseError.cause = error;
+    throw parseError;
+  }
+}
+
+function loadMatrix(matrixPath) {
+  try {
+    return readMatrixFile(matrixPath);
+  } catch (error) {
+    console.error(error.message);
+    if (error.code === 'MATRIX_NOT_FOUND') {
+      process.exit(2);
+    }
     process.exit(1);
   }
 }
@@ -206,46 +221,46 @@ function collectReasons(requiredSkills, requiredPolicies, installedSkills, stage
   return { reasons, skillsMissing, providedPolicies, policiesMissing };
 }
 
-function main() {
-  const args = parseArgs(process.argv.slice(2));
-  if (!(args.matrix && args.stage)) {
-    failWithUsage();
-  }
-
-  const matrixPath = resolve(args.matrix);
-  const matrix = loadMatrix(matrixPath);
-  const stage = matrix?.stages?.[args.stage];
+export function evaluateSkillsGate({
+  matrix,
+  stageName,
+  args,
+  installedSkills = [],
+  logExists = false,
+  logText = '',
+}) {
+  const stage = matrix?.stages?.[stageName];
   if (!stage) {
-    console.error(`Stage not found in matrix: ${args.stage}`);
-    process.exit(2);
+    const error = new Error(`Stage not found in matrix: ${stageName}`);
+    error.code = 'STAGE_NOT_FOUND';
+    throw error;
   }
 
   const { requiredSkills, optionalSkills, forbiddenSkills, requiredPolicies } =
     getStageSkills(stage);
-  const installedSkills = collectInstalledSkills();
   const { reasons, skillsMissing, providedPolicies, policiesMissing } = collectReasons(
     requiredSkills,
     requiredPolicies,
     installedSkills,
     stage,
-    args,
+    { ...args, stage: stageName },
   );
 
   const swarmViolations = checkSwarmConstraints(stage, args);
   reasons.push(...swarmViolations);
 
-  let skillsUsed = [];
-  let forbiddenSkillsUsed = [];
   const warnings = [];
   const allKnownSkills = [
     ...new Set([...installedSkills, ...requiredSkills, ...optionalSkills, ...forbiddenSkills]),
   ];
+  let skillsUsed = [];
+  let forbiddenSkillsUsed = [];
+
   if (!args.log) {
     if (forbiddenSkills.length > 0) {
       warnings.push('forbidden skills usage check skipped: pass --log <path> to enable detection');
     }
-  } else if (existsSync(args.log)) {
-    const logText = readFileSync(args.log, 'utf8');
+  } else if (logExists) {
     skillsUsed = detectSkillsUsed(logText, allKnownSkills);
     forbiddenSkillsUsed = skillsUsed.filter((name) => forbiddenSkills.includes(name));
     if (forbiddenSkillsUsed.length > 0) {
@@ -258,8 +273,8 @@ function main() {
   const status = reasons.length === 0 ? 'pass' : 'blocked';
   const result = {
     matrixVersion: matrix?.version ?? 1,
-    stage: args.stage,
-    label: stage.label ?? args.stage,
+    stage: stageName,
+    label: stage.label ?? stageName,
     agent: args.agent || '',
     status,
     skillGateStatus: status,
@@ -281,10 +296,58 @@ function main() {
     warnings,
   };
 
-  const exitCode = status === 'pass' ? 0 : 1;
+  return { result, exitCode: status === 'pass' ? 0 : 1 };
+}
+
+function main() {
+  const args = parseArgs(process.argv.slice(2));
+  if (!(args.matrix && args.stage)) {
+    failWithUsage();
+  }
+
+  const matrixPath = resolve(args.matrix);
+  const matrix = loadMatrix(matrixPath);
+  const installedSkills = collectInstalledSkills();
+  const logExists = Boolean(args.log && existsSync(args.log));
+  const logText = logExists ? readFileSync(args.log, 'utf8') : '';
+
+  let evaluation;
+  try {
+    evaluation = evaluateSkillsGate({
+      matrix,
+      stageName: args.stage,
+      args,
+      installedSkills,
+      logExists,
+      logText,
+    });
+  } catch (error) {
+    console.error(error.message);
+    if (error.code === 'STAGE_NOT_FOUND') {
+      process.exit(2);
+    }
+    process.exit(1);
+  }
+  const { result, exitCode } = evaluation;
+
   process.stdout.write(`${JSON.stringify(result, null, 2)}\n`, () => {
     process.exit(exitCode);
   });
 }
 
-main();
+const scriptPath = fileURLToPath(import.meta.url);
+if (process.argv[1] === scriptPath) {
+  main();
+}
+
+export {
+  parseArgs,
+  getSkillDirs,
+  getSkillNameFromDir,
+  collectInstalledSkills,
+  detectSkillsUsed,
+  checkSwarmConstraints,
+  collectReasons,
+  getStageSkills,
+  loadMatrix,
+};
