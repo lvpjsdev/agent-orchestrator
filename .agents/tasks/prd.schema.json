@@ -1,0 +1,195 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Product Requirements Document",
+  "description": "Defines the structure for PRD files used by the agent orchestrator. Each property below includes documentation about its role in the PRD.",
+  "type": "object",
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(?:\\.\\d+)?$",
+      "description": "Version of this schema definition, following semantic versioning."
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+(?:\\.\\d+)?$",
+      "description": "Version of the PRD content, matching release or draft numbering."
+    },
+    "project": {
+      "type": "string",
+      "description": "Project identifier or name this PRD describes."
+    },
+    "description": {
+      "type": "string",
+      "description": "High-level summary of the work covered by the PRD."
+    },
+    "scope": {
+      "type": "object",
+      "description": "Clarifies what work is in scope and out of scope.",
+      "properties": {
+        "in": {
+          "type": "array",
+          "description": "Items explicitly in scope.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "out": {
+          "type": "array",
+          "description": "Items explicitly out of scope.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["in", "out"],
+      "additionalProperties": false
+    },
+    "decisions": {
+      "type": "array",
+      "description": "Key architectural or policy decisions stemming from this PRD.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^D\\d+$",
+            "description": "Decision identifier, typically D followed by digits."
+          },
+          "decision": {
+            "type": "string",
+            "description": "Text of the decision being recorded."
+          },
+          "rationale": {
+            "type": "string",
+            "description": "Motivation explaining why the decision was made."
+          }
+        },
+        "required": ["id", "decision", "rationale"],
+        "additionalProperties": false
+      }
+    },
+    "stories": {
+      "type": "array",
+      "description": "Detailed user stories/tasks that need to be delivered.",
+      "items": {
+        "$ref": "#/$defs/story"
+      },
+      "minItems": 1
+    },
+    "escalations": {
+      "type": "array",
+      "description": "Optional list of escalations, approvals, or outstanding questions.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "description": "Artifacts (docs, scripts, configs) produced or referenced by the PRD.
+",
+      "items": {
+        "type": "string"
+      }
+    },
+    "context": {
+      "type": "object",
+      "description": "Additional context such as references to repositories, scripts, or docs.",
+      "properties": {
+        "references": {
+          "type": "array",
+          "description": "Helpful references or context documents.",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": ["references"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["version", "project", "description", "scope", "stories"],
+  "additionalProperties": false,
+  "$defs": {
+    "idPattern": {
+      "type": "string",
+      "pattern": "^[A-Z]\\d+$",
+      "description": "Generic ID pattern for decisions and stories."
+    },
+    "story": {
+      "type": "object",
+      "description": "Story metadata including verification, priority, status, and estimates.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^S\\d+$",
+          "description": "Story ID, prefixed with S followed by digits."
+        },
+        "title": {
+          "type": "string",
+          "description": "Concise, descriptive title for the story."
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed explanation of the work or goal."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "in-progress", "done", "blocked"],
+          "description": "Current execution status of the story. Common legacy labels like 'open' should be mapped to the nearest enum value."
+        },
+        "priority": {
+          "description": "Priority level (1 highest, 5 lowest) and legacy textual labels.",
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            },
+            {
+              "type": "string",
+              "enum": ["low", "medium", "high", "critical"]
+            }
+          ]
+        },
+        "estimate_min": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Lower bound of time estimate in hours, decimals permitted."
+        },
+        "estimate_max": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Upper bound of time estimate in hours, decimals permitted."
+        },
+        "dependencies": {
+          "type": "array",
+          "description": "IDs of stories that must be delivered before this one.",
+          "items": {
+            "type": "string",
+            "pattern": "^S\\d+$"
+          }
+        },
+        "verification": {
+          "type": "array",
+          "description": "Acceptance criteria or checks verifying the story.
+          "items": {
+            "type": "string"
+          }
+        },
+        "owners": {
+          "type": "array",
+          "description": "Team members responsible for delivering the story.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "string",
+          "description": "Informational notes or implementation hints."
+        }
+      },
+      "required": ["id", "title", "description", "status", "priority"],
+      "additionalProperties": false
+    }
+  }
+}
