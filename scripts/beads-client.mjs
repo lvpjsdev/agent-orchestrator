@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
@@ -63,7 +61,7 @@ export async function execBeads(args, options = {}) {
 /**
  * List ready tasks (no open blockers)
  * @param {{ cwd?: string }} options 
- * @returns {Promise<import('../src/index.js').BeadsClientResult<import('../src/index.js').BeadsTask[]>>}
+ * @returns {Promise<import('../src/index.ts').BeadsClientResult<import('../src/index.ts').BeadsTask[]>>}
  */
 export async function listReadyTasks(options = {}) {
   const result = await execBeads(['ready', '--json'], options);
@@ -86,9 +84,9 @@ export async function listReadyTasks(options = {}) {
 
 /**
  * Create a new task
- * @param {string} title 
- * @param {{ type?: string, priority?: string, stage?: string, cwd?: string }} options 
- * @returns {Promise<import('../src/index.js').BeadsClientResult<import('../src/index.js').BeadsTask>>}
+ * @param {string} title
+ * @param {{ type?: string, priority?: string, stage?: string, cwd?: string }} options
+ * @returns {Promise<import('../src/index.ts').BeadsClientResult<import('../src/index.ts').BeadsTask>>}
  */
 export async function createTask(title, options = {}) {
   const args = ['create', title];
@@ -130,8 +128,8 @@ export async function createTask(title, options = {}) {
 /**
  * Update a task
  * @param {string} taskId 
- * @param {{ status?: string, assignee?: string, cwd?: string }} updates 
- * @returns {Promise<import('../src/index.js').BeadsClientResult<boolean>>}
+ * @param {{ status?: string, assignee?: string, cwd?: string }} updates
+ * @returns {Promise<import('../src/index.ts').BeadsClientResult<boolean>>}
  */
 export async function updateTask(taskId, updates = {}) {
   const args = ['update', taskId];
@@ -158,9 +156,9 @@ export async function updateTask(taskId, updates = {}) {
 
 /**
  * Show task details
- * @param {string} taskId 
- * @param {{ cwd?: string }} options 
- * @returns {Promise<import('../src/index.js').BeadsClientResult<import('../src/index.js').BeadsTask>>}
+ * @param {string} taskId
+ * @param {{ cwd?: string }} options
+ * @returns {Promise<import('../src/index.ts').BeadsClientResult<import('../src/index.ts').BeadsTask>>}
  */
 export async function showTask(taskId, options = {}) {
   const result = await execBeads(['show', taskId, '--json'], options);
