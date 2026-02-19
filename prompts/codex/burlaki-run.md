@@ -269,7 +269,7 @@ STATUS: done → proceed to review
 
 **Goal:** Multi-perspective code review.
 
-**Approach:** Run review checks sequentially or spawn parallel agents.
+**Approach:** Run review checks sequentially.
 
 **Review checklist:**
 
