@@ -23,7 +23,7 @@ Automate worktree lifecycle management for feature development, ensuring isolati
 
 - Must use pattern: `.codex/worktrees/<story-id>` for worktree directory
 - Must use pattern: `feature/<story-id>-<slug>` for branch naming (strict enforcement)
-- Auto-increment suffix (`-v2`, `-v3`) if worktree already exists for story-id
+- Auto-increment suffix (`-v2`, `-v3`) if worktree already exists for scene-id
 - Fail fast on errors (disk space, permissions) - no retry/fallback
 - Use multi-method sync detection (git rev-list + git worktree prune -v)
 
