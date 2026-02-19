@@ -10,7 +10,8 @@
       "default": "./dist/index.js"
     },
     "./matrix": "./dist/agent-skills-matrix.json",
-    "./cli": "./dist/scripts/skills-gate.mjs"
+    "./cli": "./dist/scripts/skills-gate.mjs",
+    "./beads": "./scripts/beads-unified.mjs"
   },
   "bin": {
     "burlaki-skills-gate": "dist/scripts/skills-gate.mjs",
@@ -32,7 +33,9 @@
     "check:fix": "biome check . --write",
     "skills:gate": "node scripts/skills-gate.mjs",
     "burlaki:status": "node scripts/burlaki-status.mjs",
-    "test": "node --test tests/unit/skills-gate.test.mjs",
+    "test": "node --test tests/unit/skills-gate.test.mjs tests/unit/beads-fallback.test.mjs",
+    "test:beads": "node --test tests/unit/beads-fallback.test.mjs",
+    "beads:migrate": "node scripts/migrate-to-beads.mjs",
     "prompts:install": "node scripts/install-prompts.mjs --tool codex && node scripts/install-prompts.mjs --tool opencode && node scripts/install-prompts.mjs --tool claude",
     "prompts:install:codex": "node scripts/install-prompts.mjs --tool codex",
     "prompts:install:opencode": "node scripts/install-prompts.mjs --tool opencode",

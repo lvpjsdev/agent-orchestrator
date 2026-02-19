@@ -52,4 +52,8 @@ await client.updateTask(task.id, { status: 'in_progress', assignee: 'claude' });
 
 When beads is unavailable, Burlaki uses `.burlaki/tasks.json` for storage. This allows development to continue while beads integration remains optional.
 
-Migration from fallback to beads can be done via `scripts/migrate-to-beads.mjs`.
+Migration from fallback to beads can be done via `scripts/migrate-to-beads.mjs`:
+
+```bash
+node scripts/migrate-to-beads.mjs
+```
