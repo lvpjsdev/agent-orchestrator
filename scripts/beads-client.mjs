@@ -2,10 +2,10 @@
 
 import { spawn } from 'node:child_process';
 import { existsSync } from 'node:fs';
-import { homedir } from 'node:os';
 import { join } from 'node:path';
 
 const BEADS_TIMEOUT_MS = 30000;
+const BEADS_TASK_ID_RE = /(bd-[a-z0-9]+)/i;
 
 /**
  * Check if beads CLI is available in PATH
@@ -111,7 +111,7 @@ export async function createTask(title, options = {}) {
   }
   
   // Parse task ID from output (e.g., "Created task bd-a1b2")
-  const idMatch = result.stdout.match(/(bd-[a-z0-9]+)/i);
+  const idMatch = result.stdout.match(BEADS_TASK_ID_RE);
   const taskId = idMatch ? idMatch[1] : '';
   
   return { 
