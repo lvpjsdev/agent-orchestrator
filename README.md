@@ -169,6 +169,22 @@ git reset --hard <checkpoint-sha>
 
 See [ROADMAP.md](ROADMAP.md) for planned features.
 
+## Beads Integration
+
+Burlaki integrates with [Beads](https://github.com/steveyegge/beads) for persistent task tracking across agent sessions.
+
+### Quick Setup
+
+1. Install beads CLI: `curl -fsSL https://raw.githubusercontent.com/steveyegge/beads/main/scripts/install.sh | bash`
+2. Initialize in your project: `bd init`
+3. Burlaki will automatically use beads for task storage
+
+### Graceful Degradation
+
+If beads CLI is not available or `.beads/` is not initialized, Burlaki falls back to JSON storage in `.burlaki/tasks.json` with a warning log.
+
+See [docs/BEADS_INTEGRATION.md](docs/BEADS_INTEGRATION.md) for detailed usage.
+
 ## Acknowledgments & License Attribution
 
 This project's workflow was inspired by the following sources:
